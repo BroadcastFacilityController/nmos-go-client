@@ -1,4 +1,4 @@
-package nmos
+package common
 
 import (
 	"fmt"
@@ -40,6 +40,8 @@ func NewAPIVersionFromString(version string) (*APIVersion, error) {
 	}
 	return &v, nil
 }
+
+func HighestAPIVersion()
 
 func (v APIVersion) String() string {
 	majstr := strconv.FormatUint(uint64(v.major), 10)

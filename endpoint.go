@@ -3,59 +3,37 @@ package nmos
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
-	"strconv"
 	"strings"
-)
 
-type NMOSAPIType string
-
-const (
-	NODE         NMOSAPIType = "node"         // IS-04 defined
-	QUERY        NMOSAPIType = "query"        // IS-04 defined
-	REGISTRATION NMOSAPIType = "registration" // IS-04 defined
-
-	CONNECTION NMOSAPIType = "connection" // IS-05 defined
-
-	EVENTS NMOSAPIType = "events" // IS-07 defined
-
-	CHANNELMAPPING NMOSAPIType = "channelmapping" // IS-08 defined
-
-	SYSTEM NMOSAPIType = "system" // IS-09 defined
-
-	AUTH NMOSAPIType = "auth" // IS-10 defined
-
-	STREAMCOMPATABILITY NMOSAPIType = "streamcompatibility" // IS-11 defined
-
-	CONFIGURATION NMOSAPIType = "configuration" // IS-14 defined
+	"github.com/BroadcastFacilityController/nmos-go-client/common"
+	"github.com/BroadcastFacilityController/nmos-go-client/is04"
 )
 
 type NMOSEndpoint struct {
-	hostname string
-	port     uint16
+	href string
 }
 
-func NewNMOSEndpoint(hostname string, port uint16) *NMOSEndpoint {
-	n := NMOSEndpoint{
-		hostname: hostname,
-		port:     port,
+// Creates a new API endpoint for NMOS from given href. Ex: href = "http://10.10.10.10:8080/x-nmos"
+func NewNMOSEndpoint(href string) (*NMOSEndpoint, error) {
+	href = strings.Trim(href, "/") // remove trailing slashes
+	if href[len(href)-7:] != "/x-nmos" {
+		return nil, fmt.Errorf("bad href argument")
 	}
-	return &n
+	n := NMOSEndpoint{
+		href: href,
+	}
+	return &n, nil
 }
 
-func (n *NMOSEndpoint) GetBaseURL() string {
-	portStr := strconv.FormatUint(uint64(n.port), 10)
-	url := "http://" + n.hostname + ":" + portStr + "/x-nmos/"
-	return url
-}
-
-func (n *NMOSEndpoint) GetSupportedAPIs() ([]NMOSAPIType, error) {
-	url := n.GetBaseURL()
+func (n *NMOSEndpoint) GetSupportedAPIs() ([]common.APIType, error) {
+	url := n.href
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Accept", "application/json")
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
@@ -65,40 +43,17 @@ func (n *NMOSEndpoint) GetSupportedAPIs() ([]NMOSAPIType, error) {
 	}
 	var respParsed []string
 	json.NewDecoder(resp.Body).Decode(&respParsed)
-	apis := make([]NMOSAPIType, len(respParsed))
+	apis := make([]common.APIType, len(respParsed))
 	for i, str := range respParsed {
 		str = strings.ReplaceAll(str, "/", "")
 		str = strings.ReplaceAll(str, "\\", "")
 		str = strings.ReplaceAll(str, "\r", "")
 		str = strings.ReplaceAll(str, "\n", "")
-		apis[i] = NMOSAPIType(str)
+		apis[i] = common.APIType(str)
 	}
 	return apis, nil
 }
 
-func (n *NMOSEndpoint) GetAPISupportedVersions(api NMOSAPIType) ([]APIVersion, error) {
-	url := n.GetBaseURL() + "/" + string(api) + "/"
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Add("Content-Type", "application/json")
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("invalid response code")
-	}
-	var respParsed []string
-	json.NewDecoder(resp.Body).Decode(&respParsed)
-	versions := make([]APIVersion, len(respParsed))
-	for i, str := range respParsed {
-		vers, err := NewAPIVersionFromString(str)
-		if err != nil {
-			return nil, err
-		}
-		versions[i] = *vers
-	}
-	return versions, nil
+func (n *NMOSEndpoint) IS04() *is04.IS04 {
+	return is04.NewIS04(n.href)
 }
