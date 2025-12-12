@@ -1,4 +1,4 @@
-package is04v1_0
+package is04v1_1
 
 import (
 	"bytes"
@@ -8,12 +8,12 @@ import (
 	"net/http"
 )
 
-type IS04V1_0 struct {
+type IS04V1_1 struct {
 	href string
 }
 
-func NewIS04V1_0(href string) *IS04V1_0 {
-	v := IS04V1_0{
+func NewIS04V1_1(href string) *IS04V1_1 {
+	v := IS04V1_1{
 		href: href,
 	}
 	return &v
@@ -36,8 +36,8 @@ func parseResponse[T any](response *http.Response) (T, error) {
 // -------------------- NODE API --------------------
 // --------------------------------------------------
 
-func (v *IS04V1_0) NodeGetSelf() (Node, error) {
-	url := v.href + "/node/v1.0/self"
+func (v *IS04V1_1) NodeGetSelf() (Node, error) {
+	url := v.href + "/node/v1.1/self"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return Node{}, err
@@ -60,8 +60,8 @@ func (v *IS04V1_0) NodeGetSelf() (Node, error) {
 	}
 }
 
-func (v *IS04V1_0) NodeGetSources() ([]Source, error) {
-	url := v.href + "/node/v1.0/sources"
+func (v *IS04V1_1) NodeGetSources() ([]Source, error) {
+	url := v.href + "/node/v1.1/sources"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return []Source{}, err
@@ -84,8 +84,8 @@ func (v *IS04V1_0) NodeGetSources() ([]Source, error) {
 	}
 }
 
-func (v *IS04V1_0) NodeGetSource(sourceID string) (Source, error) {
-	url := v.href + "/node/v1.0/sources/" + sourceID
+func (v *IS04V1_1) NodeGetSource(sourceID string) (Source, error) {
+	url := v.href + "/node/v1.1/sources/" + sourceID
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return Source{}, err
@@ -115,8 +115,8 @@ func (v *IS04V1_0) NodeGetSource(sourceID string) (Source, error) {
 	}
 }
 
-func (v *IS04V1_0) NodeGetFlows() ([]Flow, error) {
-	url := v.href + "/node/v1.0/flows"
+func (v *IS04V1_1) NodeGetFlows() ([]Flow, error) {
+	url := v.href + "/node/v1.1/flows"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return []Flow{}, err
@@ -139,8 +139,8 @@ func (v *IS04V1_0) NodeGetFlows() ([]Flow, error) {
 	}
 }
 
-func (v *IS04V1_0) NodeGetFlow(flowID string) (Flow, error) {
-	url := v.href + "/node/v1.0/flows/" + flowID
+func (v *IS04V1_1) NodeGetFlow(flowID string) (Flow, error) {
+	url := v.href + "/node/v1.1/flows/" + flowID
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return Flow{}, err
@@ -170,8 +170,8 @@ func (v *IS04V1_0) NodeGetFlow(flowID string) (Flow, error) {
 	}
 }
 
-func (v *IS04V1_0) NodeGetDevices() ([]Device, error) {
-	url := v.href + "/node/v1.0/devices"
+func (v *IS04V1_1) NodeGetDevices() ([]Device, error) {
+	url := v.href + "/node/v1.1/devices"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return []Device{}, err
@@ -194,8 +194,8 @@ func (v *IS04V1_0) NodeGetDevices() ([]Device, error) {
 	}
 }
 
-func (v *IS04V1_0) NodeGetDevice(deviceID string) (Device, error) {
-	url := v.href + "/node/v1.0/devices/" + deviceID
+func (v *IS04V1_1) NodeGetDevice(deviceID string) (Device, error) {
+	url := v.href + "/node/v1.1/devices/" + deviceID
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return Device{}, err
@@ -225,8 +225,8 @@ func (v *IS04V1_0) NodeGetDevice(deviceID string) (Device, error) {
 	}
 }
 
-func (v *IS04V1_0) NodeGetSenders() ([]Sender, error) {
-	url := v.href + "/node/v1.0/senders"
+func (v *IS04V1_1) NodeGetSenders() ([]Sender, error) {
+	url := v.href + "/node/v1.1/senders"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return []Sender{}, err
@@ -249,8 +249,8 @@ func (v *IS04V1_0) NodeGetSenders() ([]Sender, error) {
 	}
 }
 
-func (v *IS04V1_0) NodeGetSender(senderID string) (Sender, error) {
-	url := v.href + "/node/v1.0/senders/" + senderID
+func (v *IS04V1_1) NodeGetSender(senderID string) (Sender, error) {
+	url := v.href + "/node/v1.1/senders/" + senderID
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return Sender{}, err
@@ -280,8 +280,8 @@ func (v *IS04V1_0) NodeGetSender(senderID string) (Sender, error) {
 	}
 }
 
-func (v *IS04V1_0) NodeGetReceivers() ([]Receiver, error) {
-	url := v.href + "/node/v1.0/receivers"
+func (v *IS04V1_1) NodeGetReceivers() ([]Receiver, error) {
+	url := v.href + "/node/v1.1/receivers"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return []Receiver{}, err
@@ -304,8 +304,8 @@ func (v *IS04V1_0) NodeGetReceivers() ([]Receiver, error) {
 	}
 }
 
-func (v *IS04V1_0) NodeGetReceiver(receiverID string) (Receiver, error) {
-	url := v.href + "/node/v1.0/receivers/" + receiverID
+func (v *IS04V1_1) NodeGetReceiver(receiverID string) (Receiver, error) {
+	url := v.href + "/node/v1.1/receivers/" + receiverID
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return Receiver{}, err
@@ -336,8 +336,8 @@ func (v *IS04V1_0) NodeGetReceiver(receiverID string) (Receiver, error) {
 }
 
 // Patches a sender to a receiver. Passing nil as sender agument unpatches
-func (v *IS04V1_0) NodePutReceiver(receiverID string, sender *Sender) error {
-	url := v.href + "/node/v1.0/sources/" + receiverID + "/target"
+func (v *IS04V1_1) NodePutReceiver(receiverID string, sender *Sender) error {
+	url := v.href + "/node/v1.1/sources/" + receiverID + "/target"
 	requestBody, err := json.Marshal(sender)
 	if err != nil {
 		return err
@@ -382,8 +382,8 @@ func (v *IS04V1_0) NodePutReceiver(receiverID string, sender *Sender) error {
 // -------------------- QUERY API -------------------
 // --------------------------------------------------
 
-func (v *IS04V1_0) QueryGetNodes() ([]Node, error) {
-	url := v.href + "/query/v1.0/nodes"
+func (v *IS04V1_1) QueryGetNodes() ([]Node, error) {
+	url := v.href + "/query/v1.1/nodes"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return []Node{}, err
@@ -406,8 +406,8 @@ func (v *IS04V1_0) QueryGetNodes() ([]Node, error) {
 	}
 }
 
-func (v *IS04V1_0) QueryGetNode(nodeID string) (Node, error) {
-	url := v.href + "/query/v1.0/nodes/" + nodeID
+func (v *IS04V1_1) QueryGetNode(nodeID string) (Node, error) {
+	url := v.href + "/query/v1.1/nodes/" + nodeID
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return Node{}, err
@@ -437,8 +437,8 @@ func (v *IS04V1_0) QueryGetNode(nodeID string) (Node, error) {
 	}
 }
 
-func (v *IS04V1_0) QueryGetSources() ([]Source, error) {
-	url := v.href + "/query/v1.0/sources"
+func (v *IS04V1_1) QueryGetSources() ([]Source, error) {
+	url := v.href + "/query/v1.1/sources"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return []Source{}, err
@@ -461,8 +461,8 @@ func (v *IS04V1_0) QueryGetSources() ([]Source, error) {
 	}
 }
 
-func (v *IS04V1_0) QueryGetSource(sourceID string) (Source, error) {
-	url := v.href + "/query/v1.0/sources/" + sourceID
+func (v *IS04V1_1) QueryGetSource(sourceID string) (Source, error) {
+	url := v.href + "/query/v1.1/sources/" + sourceID
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return Source{}, err
@@ -492,8 +492,8 @@ func (v *IS04V1_0) QueryGetSource(sourceID string) (Source, error) {
 	}
 }
 
-func (v *IS04V1_0) QueryGetFlows() ([]Flow, error) {
-	url := v.href + "/query/v1.0/flows"
+func (v *IS04V1_1) QueryGetFlows() ([]Flow, error) {
+	url := v.href + "/query/v1.1/flows"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return []Flow{}, err
@@ -516,8 +516,8 @@ func (v *IS04V1_0) QueryGetFlows() ([]Flow, error) {
 	}
 }
 
-func (v *IS04V1_0) QueryGetFlow(flowID string) (Flow, error) {
-	url := v.href + "/query/v1.0/flows/" + flowID
+func (v *IS04V1_1) QueryGetFlow(flowID string) (Flow, error) {
+	url := v.href + "/query/v1.1/flows/" + flowID
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return Flow{}, err
@@ -547,8 +547,8 @@ func (v *IS04V1_0) QueryGetFlow(flowID string) (Flow, error) {
 	}
 }
 
-func (v *IS04V1_0) QueryGetDevices() ([]Device, error) {
-	url := v.href + "/query/v1.0/devices"
+func (v *IS04V1_1) QueryGetDevices() ([]Device, error) {
+	url := v.href + "/query/v1.1/devices"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return []Device{}, err
@@ -571,8 +571,8 @@ func (v *IS04V1_0) QueryGetDevices() ([]Device, error) {
 	}
 }
 
-func (v *IS04V1_0) QueryGetDevice(deviceID string) (Device, error) {
-	url := v.href + "/query/v1.0/devices/" + deviceID
+func (v *IS04V1_1) QueryGetDevice(deviceID string) (Device, error) {
+	url := v.href + "/query/v1.1/devices/" + deviceID
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return Device{}, err
@@ -602,8 +602,8 @@ func (v *IS04V1_0) QueryGetDevice(deviceID string) (Device, error) {
 	}
 }
 
-func (v *IS04V1_0) QueryGetSenders() ([]Sender, error) {
-	url := v.href + "/query/v1.0/senders"
+func (v *IS04V1_1) QueryGetSenders() ([]Sender, error) {
+	url := v.href + "/query/v1.1/senders"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return []Sender{}, err
@@ -626,8 +626,8 @@ func (v *IS04V1_0) QueryGetSenders() ([]Sender, error) {
 	}
 }
 
-func (v *IS04V1_0) QueryGetSender(senderID string) (Sender, error) {
-	url := v.href + "/query/v1.0/senders/" + senderID
+func (v *IS04V1_1) QueryGetSender(senderID string) (Sender, error) {
+	url := v.href + "/query/v1.1/senders/" + senderID
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return Sender{}, err
@@ -657,8 +657,8 @@ func (v *IS04V1_0) QueryGetSender(senderID string) (Sender, error) {
 	}
 }
 
-func (v *IS04V1_0) QueryGetReceivers() ([]Receiver, error) {
-	url := v.href + "/query/v1.0/receivers"
+func (v *IS04V1_1) QueryGetReceivers() ([]Receiver, error) {
+	url := v.href + "/query/v1.1/receivers"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return []Receiver{}, err
@@ -681,8 +681,8 @@ func (v *IS04V1_0) QueryGetReceivers() ([]Receiver, error) {
 	}
 }
 
-func (v *IS04V1_0) QueryGetReceiver(receiverID string) (Receiver, error) {
-	url := v.href + "/query/v1.0/receivers/" + receiverID
+func (v *IS04V1_1) QueryGetReceiver(receiverID string) (Receiver, error) {
+	url := v.href + "/query/v1.1/receivers/" + receiverID
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return Receiver{}, err
@@ -712,8 +712,8 @@ func (v *IS04V1_0) QueryGetReceiver(receiverID string) (Receiver, error) {
 	}
 }
 
-func (v *IS04V1_0) QueryGetSubscriptions() ([]QueryAPISubscription, error) {
-	url := v.href + "/query/v1.0/subscriptions"
+func (v *IS04V1_1) QueryGetSubscriptions() ([]QueryAPISubscription, error) {
+	url := v.href + "/query/v1.1/subscriptions"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return []QueryAPISubscription{}, err
@@ -736,8 +736,8 @@ func (v *IS04V1_0) QueryGetSubscriptions() ([]QueryAPISubscription, error) {
 	}
 }
 
-func (v *IS04V1_0) QueryGetSubscription(subscriptionID string) (QueryAPISubscription, error) {
-	url := v.href + "/query/v1.0/subscriptions/" + subscriptionID
+func (v *IS04V1_1) QueryGetSubscription(subscriptionID string) (QueryAPISubscription, error) {
+	url := v.href + "/query/v1.1/subscriptions/" + subscriptionID
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return QueryAPISubscription{}, err
@@ -768,8 +768,8 @@ func (v *IS04V1_0) QueryGetSubscription(subscriptionID string) (QueryAPISubscrip
 }
 
 // Open a new websocket connection
-func (v *IS04V1_0) QueryPostSubscription(subscription QueryAPISubscriptionPost) (QueryAPISubscription, error) {
-	url := v.href + "/query/v1.0/subscriptions"
+func (v *IS04V1_1) QueryPostSubscription(subscription QueryAPISubscriptionPost) (QueryAPISubscription, error) {
+	url := v.href + "/query/v1.1/subscriptions"
 	requestBody, err := json.Marshal(subscription)
 	if err != nil {
 		return QueryAPISubscription{}, err
@@ -810,8 +810,8 @@ func (v *IS04V1_0) QueryPostSubscription(subscription QueryAPISubscriptionPost) 
 	}
 }
 
-func (v *IS04V1_0) QueryDeleteSubscription(subscriptionID string) error {
-	url := v.href + "/query/v1.0/subscriptions/" + subscriptionID
+func (v *IS04V1_1) QueryDeleteSubscription(subscriptionID string) error {
+	url := v.href + "/query/v1.1/subscriptions/" + subscriptionID
 	request, err := http.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {
 		return err
@@ -849,8 +849,8 @@ func (v *IS04V1_0) QueryDeleteSubscription(subscriptionID string) error {
 // --------------------------------------------------
 
 // Show a Node's health (for debug use only)
-func (v *IS04V1_0) RegistrationGetNodeHealth(nodeID string) (RegistrationHealth, error) {
-	url := v.href + "/registration/v1.0/health/nodes/" + nodeID
+func (v *IS04V1_1) RegistrationGetNodeHealth(nodeID string) (RegistrationHealth, error) {
+	url := v.href + "/registration/v1.1/health/nodes/" + nodeID
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return RegistrationHealth{}, err

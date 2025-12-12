@@ -20,19 +20,17 @@ func main() {
 		fmt.Println(api)
 		switch api {
 		case common.NODE:
-			// Skip test
-			continue
 			// IS-04 Node
-			//fmt.Print("Versions: ")
-			//fmt.Println(endpoint.GetNodeAPI().GetSupportedVersions())
-			//fmt.Print("Sources: ")
-			//fmt.Println(endpoint.GetNodeAPI().GetV1_0().GetSelf())
-			//fmt.Print("Flows: ")
-			//fmt.Println(endpoint.GetNodeAPI().GetV1_0().GetFlows())
-			//fmt.Print("Devices: ")
-			//fmt.Println(endpoint.GetNodeAPI().GetV1_0().GetDevices())
-			//fmt.Print("Senders: ")
-			//fmt.Println(endpoint.GetNodeAPI().GetV1_0().GetSenders())
+			fmt.Print("Versions: ")
+			fmt.Println(endpoint.IS04().GetAPIVersions(api))
+			fmt.Print("Sources: ")
+			fmt.Println(endpoint.IS04().V1_0().NodeGetSelf())
+			fmt.Print("Flows: ")
+			fmt.Println(endpoint.IS04().V1_0().NodeGetFlows())
+			fmt.Print("Devices: ")
+			fmt.Println(endpoint.IS04().V1_0().NodeGetDevices())
+			fmt.Print("Senders: ")
+			fmt.Println(endpoint.IS04().V1_0().NodeGetSenders())
 			//fmt.Print("Receivers: ")
 			//fmt.Println(endpoint.GetNodeAPI().GetV1_0().GetReceivers())
 			// Check unpatch

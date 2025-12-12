@@ -41,7 +41,20 @@ func NewAPIVersionFromString(version string) (*APIVersion, error) {
 	return &v, nil
 }
 
-func HighestAPIVersion()
+func HighestAPIVersion(apis []APIVersion) APIVersion {
+	// Length check
+	if len(apis) < 1 {
+		return APIVersion{}
+	}
+
+	highestVersion := apis[0]
+	for _, api := range apis {
+		if api.GreaterThan(&highestVersion) {
+			highestVersion = api
+		}
+	}
+	return highestVersion
+}
 
 func (v APIVersion) String() string {
 	majstr := strconv.FormatUint(uint64(v.major), 10)
