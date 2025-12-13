@@ -87,6 +87,18 @@ const (
 	FLOW_VIDE_RAW_COMPONENT_DEPTH FlowVideoRawComponentName = "DepthMap"
 )
 
+type FlowType string
+
+const (
+	FLOW_TYPE_VIDEO_RAW   FlowType = "flow_video_raw"
+	FLOW_TYPE_VIDEO_CODED FlowType = "flow_video_coded"
+	FLOW_TYPE_AUDIO_RAW   FlowType = "flow_audio_raw"
+	FLOW_TYPE_AUDIO_CODED FlowType = "flow_audio_coded"
+	FLOW_TYPE_DATA        FlowType = "flow_data"
+	FLOW_TYPE_SDIANC_DATA FlowType = "flow_sdianc_data"
+	FLOW_TYPE_MUX         FlowType = "flow_mux"
+)
+
 type TransportURI URI
 
 const (
