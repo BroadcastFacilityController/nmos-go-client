@@ -9,6 +9,7 @@ import (
 
 	"github.com/BroadcastFacilityController/nmos-go-client/common"
 	is04v1_0 "github.com/BroadcastFacilityController/nmos-go-client/is04/v1.0"
+	is04v1_1 "github.com/BroadcastFacilityController/nmos-go-client/is04/v1.1"
 )
 
 type IS04 struct {
@@ -139,4 +140,8 @@ func (s *IS04) HasAPI(api common.APIType) bool {
 
 func (s *IS04) V1_0() *is04v1_0.IS04V1_0 {
 	return is04v1_0.NewIS04V1_0(s.href)
+}
+
+func (s *IS04) V1_1() *is04v1_1.IS04V1_1 {
+	return is04v1_1.NewIS04V1_1(s.href)
 }

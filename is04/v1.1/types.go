@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/BroadcastFacilityController/nmos-go-client/common"
 	"github.com/guregu/null/v6"
 	"github.com/guregu/null/v6/zero"
 )
@@ -22,6 +23,46 @@ type ClockPTP struct {
 	Version   ClockPTPVersion `json:"version"`   // Version of PTP reference used by this clock
 	GMID      string          `json:"gmid"`      // ID of the PTP reference used by this clock
 	Locked    bool            `json:"locked"`    // Lock state of this clock to the external reference. If true, this device is slaved, otherwise it has no defined relationship to the external reference
+}
+
+// Interface for holding multiple types of clocks.
+// Used only for unmarshalling JSON.
+// Type points to the method that stores the actual type. All others are null.
+type Clock struct {
+	Type          ClockRefType
+	ClockInternal *ClockInternal
+	ClockPTP      *ClockPTP
+}
+
+func (c *Clock) UnmarshalJSON(data []byte) error {
+	// Unmarshal to a map[string]interface{} to test
+	var dataTest map[string]interface{}
+	err := json.Unmarshal(data, &dataTest)
+	if err != nil {
+		return err
+	}
+	clockType := dataTest["ref_type"].(string)
+	switch ClockRefType(clockType) {
+	case CLOCK_REF_INTERNAL:
+		c.Type = CLOCK_REF_INTERNAL
+		return json.Unmarshal(data, c.ClockInternal)
+	case CLOCK_REF_PTP:
+		c.Type = CLOCK_REF_PTP
+		return json.Unmarshal(data, c.ClockPTP)
+	default:
+		return fmt.Errorf("unable to parse ref_type for data: %s", string(data))
+	}
+}
+
+func (c *Clock) MarshalJSON() ([]byte, error) {
+	switch c.Type {
+	case CLOCK_REF_PTP:
+		return json.Marshal(c.ClockPTP)
+	case CLOCK_REF_INTERNAL:
+		return json.Marshal(c.ClockInternal)
+	default:
+		return nil, fmt.Errorf("could not marshal clock %v", *c)
+	}
 }
 
 // Describes the foundations of all NMOS resources
@@ -173,11 +214,11 @@ func (f *Flow) UnmarshalJSON(data []byte) error {
 	if err != nil {
 		return err
 	}
-	format, format_ok := dataTest["format"].(FormatURI)
+	format, format_ok := dataTest["format"].(string)
 	if !format_ok {
 		return fmt.Errorf("unable to parse format for data: %s", string(data))
 	}
-	switch format {
+	switch FormatURI(format) {
 	case FORMAT_VIDEO:
 		// Video
 		mediaType, mediaType_ok := dataTest["media_type"].(IANAMediaType)
@@ -284,15 +325,50 @@ func (f *Flow) UnmarshalJSON(data []byte) error {
 	}
 }
 
+func (f *Flow) MarshalJSON() ([]byte, error) {
+	switch f.Type {
+	case FLOW_TYPE_VIDEO_RAW:
+		return json.Marshal(f.FlowVideoRaw)
+	case FLOW_TYPE_VIDEO_CODED:
+		return json.Marshal(f.FlowVideoCoded)
+	case FLOW_TYPE_AUDIO_RAW:
+		return json.Marshal(f.FlowAudioRaw)
+	case FLOW_TYPE_AUDIO_CODED:
+		return json.Marshal(f.FlowAudioCoded)
+	case FLOW_TYPE_DATA:
+		return json.Marshal(f.FlowData)
+	case FLOW_TYPE_SDIANC_DATA:
+		return json.Marshal(f.FlowSDIANCData)
+	case FLOW_TYPE_MUX:
+		return json.Marshal(f.FlowMux)
+	default:
+		return nil, fmt.Errorf("could not marshal flow %v", *f)
+	}
+}
+
+// URL fragments required to connect to the Node API
+// Used for JSON unmarshalling
+type NodeAPI struct {
+	Versions  []common.APIVersion `json:"versions"`  // Supported API versions running on this Node
+	Endpoints []NodeAPIEndpoint   `json:"endpoints"` // Host, port and protocol details required to connect to the API
+}
+
+// Host, port and protocol details required to connect to the API
+type NodeAPIEndpoint struct {
+	Host     string `json:"host"`     // IP address or hostname which the Node API is running on
+	Port     int    `json:"port"`     // Port number which the Node API is running on
+	Protocol string `json:"protocol"` // Protocol supported by this instance of the Node API (http / https)
+}
+
 // Describes the Node and the services which run on it
 type Node struct {
-	ID       string        `json:"id"`                 // Globally unique identifier for the Node
-	Version  string        `json:"version"`            // String formatted TAI timestamp (<seconds>:<nanoseconds>) indicating precisely when an attribute of the resource last changed
-	Label    string        `json:"label"`              // Freeform string label for the Node
-	HRef     string        `json:"href"`               // HTTP access href for the Node's API
-	Hostname string        `json:"hostname,omitempty"` // Node hostname (optional)
+	ResourceCore
+	HRef     string        `json:"href"`               // HTTP access href for the Node's API (deprecated)
+	Hostname string        `json:"hostname,omitempty"` // Node hostname (optional, deprecated)
+	API      NodeAPI       `json:"api"`                // URL fragments required to connect to the Node API
 	Caps     any           `json:"caps"`               // Capabilities (not yet defined)
 	Services []NodeService `json:"services"`           // Array of objects containing a URN format type and href
+	Clocks   []Clock       `json:"clocks"`             // Clocks made available to Devices owned by this Node
 }
 
 type NodeService struct {
@@ -306,6 +382,7 @@ type QueryAPISubscription struct {
 	WSHRef          string `json:"ws_href"`            // Address to connect to for the websocket subscription
 	MaxUpdateRateMS int    `json:"max_update_rate_ms"` // Rate limiting for messages. Sets the minimum interval between consecutive websocket messages
 	Persist         bool   `json:"persist"`            // Whether to destroy the socket when the final client disconnects
+	Secure          bool   `json:"secure"`             // Whether to produce a secure websocket connection (wss://). NB: Default should be 'false' if the API is being presented via HTTP, and 'true' for HTTPS
 	ResourcePath    string `json:"resource_path"`      // HTTP resource path in the query API which this subscription relates to
 	Params          any    `json:"params"`             // Object containing attributes to filter the resource on as per the Query Parameters specification. Can be empty.
 }
@@ -314,6 +391,7 @@ type QueryAPISubscription struct {
 type QueryAPISubscriptionPost struct {
 	MaxUpdateRateMS int                              `json:"max_update_rate_ms"` // Rate limiting for messages. Sets the minimum interval between consecutive websocket messages
 	Persist         bool                             `json:"persist"`            // Whether to destroy the socket when the final client disconnects
+	Secure          bool                             `json:"secure"`             // Whether to produce a secure websocket connection (wss://). NB: Default should be 'false' if the API is being presented via HTTP, and 'true' for HTTPS
 	ResourcePath    QueryAPISubscriptionResourcePath `json:"resource_path"`      // HTTP resource path in the query API which this subscription relates to
 	Params          any                              `json:"params"`             // Object containing attributes to filter the resource on as per the Query Parameters specification. Can be empty.
 }
@@ -358,17 +436,136 @@ type QueryAPISubscriptionWSGrainGrainData struct {
 }
 
 // Describes a receiver
-type Receiver struct {
-	ID           string               `json:"id"`           // Globally unique identifier for the Receiver
-	Version      string               `json:"version"`      // String formatted TAI timestamp (<seconds>:<nanoseconds>) indicating precisely when an attribute of the resource last changed
-	Label        string               `json:"label"`        // Freeform string label for the Receiver
-	Description  string               `json:"description"`  // Detailed description of the Receiver
-	Format       FormatURI            `json:"format"`       // Type of Flow accepted by the Receiver as a URN
-	Caps         any                  `json:"caps"`         // Capabilities (not yet defined)
-	Tags         map[string][]string  `json:"tags"`         // Key value set of freeform string tags to aid in filtering sources. Values should be represented as an array of strings. Can be empty.
-	DeviceID     string               `json:"device_id"`    // Device ID which this Receiver forms part of
+type ReceiverCore struct {
+	ResourceCore
+	DeviceID     string               `json:"device_id"`    // Device ID which this Receiver forms part of. This attribute is used to ensure referential integrity by registry implementations.
 	Transport    TransportURI         `json:"transport"`    // Transport type accepted by the Receiver in URN format
 	Subscription ReceiverSubscription `json:"subscription"` // Object containing the 'sender_id' currently subscribed to. Sender_id should be null on initialisation.
+}
+
+// Object containing the 'sender_id' currently subscribed to. Sender_id should be null on initialisation.
+type ReceiverSubscription struct {
+	SenderID null.String `json:"sender_id"` // UUID of the Sender that this Receiver is currently subscribed to
+	Active   zero.Bool   `json:"active"`    // Not in spec, but usually implemented. True when sender_id is not null
+}
+
+// Describes an audio Receiver
+type ReceiverAudio struct {
+	ReceiverCore
+	Format FormatURI         `json:"format"` // Type of Flow accepted by the Receiver as a URN
+	Caps   ReceiverAudioCaps `json:"caps"`   // Capabilities
+}
+
+// Capabilities
+type ReceiverAudioCaps struct {
+	MediaTypes []IANAMediaType `json:"media_types"` // Subclassification of the formats accepted using IANA assigned media types
+}
+
+// Describes a data Receiver
+type ReceiverData struct {
+	ReceiverCore
+	Format FormatURI        `json:"format"` // Type of Flow accepted by the Receiver as a URN
+	Caps   ReceiverDataCaps `json:"caps"`   // Capabilities
+}
+
+// Capabilities
+type ReceiverDataCaps struct {
+	MediaTypes []IANAMediaType `json:"media_types"` // Subclassification of the formats accepted using IANA assigned media types
+}
+
+// Describes a mux Receiver
+type ReceiverMux struct {
+	ReceiverCore
+	Format FormatURI       `json:"format"` // Type of Flow accepted by the Receiver as a URN
+	Caps   ReceiverMuxCaps `json:"caps"`   // Capabilities
+}
+
+// Capabilities
+type ReceiverMuxCaps struct {
+	MediaTypes []IANAMediaType `json:"media_types"` // Subclassification of the formats accepted using IANA assigned media types
+}
+
+// Describes a video Receiver
+type ReceiverVideo struct {
+	ReceiverCore
+	Format FormatURI         `json:"format"` // Type of Flow accepted by the Receiver as a URN
+	Caps   ReceiverVideoCaps `json:"caps"`   // Capabilities
+}
+
+// Capabilities
+type ReceiverVideoCaps struct {
+	MediaTypes []IANAMediaType `json:"media_types"` // Subclassification of the formats accepted using IANA assigned media types
+}
+
+// Describes a receiver.
+// Used for JSON unmarshalling.
+// Type points to the one pointer which is non-nil.
+type Receiver struct {
+	Type          ReceiverType // Type of the receiver
+	ReceiverVideo *ReceiverVideo
+	ReceiverAudio *ReceiverAudio
+	ReceiverData  *ReceiverData
+	ReceiverMux   *ReceiverMux
+}
+
+func (r *Receiver) UnmarshalJSON(data []byte) error {
+	// Unmarshall to an object to test again
+	var dataTest map[string]interface{}
+	err := json.Unmarshal(data, &dataTest)
+	if err != nil {
+		return err
+	}
+	format, format_ok := dataTest["format"].(string)
+	if !format_ok {
+		return fmt.Errorf("unable to parse format for data: %s", string(data))
+	}
+	switch FormatURI(format) {
+	case FORMAT_VIDEO:
+		r.Type = RECEIVER_TYPE_VIDEO
+		err = json.Unmarshal(data, r.ReceiverVideo)
+		if err != nil {
+			return err
+		}
+		return nil
+	case FORMAT_AUDIO:
+		r.Type = RECEIVER_TYPE_AUDIO
+		err = json.Unmarshal(data, r.ReceiverAudio)
+		if err != nil {
+			return err
+		}
+		return nil
+	case FORMAT_DATA:
+		r.Type = RECEIVER_TYPE_DATA
+		err = json.Unmarshal(data, r.ReceiverData)
+		if err != nil {
+			return err
+		}
+		return nil
+	case FORMAT_MUX:
+		r.Type = RECEIVER_TYPE_MUX
+		err = json.Unmarshal(data, r.ReceiverMux)
+		if err != nil {
+			return err
+		}
+		return nil
+	default:
+		return fmt.Errorf("unable to parse format for data: %s", string(data))
+	}
+}
+
+func (r *Receiver) MarshalJSON() ([]byte, error) {
+	switch r.Type {
+	case RECEIVER_TYPE_VIDEO:
+		return json.Marshal(r.ReceiverVideo)
+	case RECEIVER_TYPE_AUDIO:
+		return json.Marshal(r.ReceiverAudio)
+	case RECEIVER_TYPE_DATA:
+		return json.Marshal(r.ReceiverData)
+	case RECEIVER_TYPE_MUX:
+		return json.Marshal(r.ReceiverMux)
+	default:
+		return nil, fmt.Errorf("unable to marshal receiver %v", *r)
+	}
 }
 
 type RegistrationHealth struct {
@@ -383,32 +580,131 @@ type RegistrationPost struct {
 
 // Describes a sender
 type Sender struct {
-	ID           string              `json:"id"`             // Globally unique identifier for the Sender
-	Version      string              `json:"version"`        // String formatted TAI timestamp (<seconds>:<nanoseconds>) indicating precisely when an attribute of the resource last changed
-	Label        string              `json:"label"`          // Freeform string label for the Sender
-	Description  string              `json:"description"`    // Detailed description of the Sender
-	FlowID       string              `json:"flow_id"`        // ID of the Flow currently passing via this Sender
-	Transport    TransportURI        `json:"transport"`      // Transport type used by the Sender in URN format
-	Tags         map[string][]string `json:"tags,omitempty"` // Key value set of freeform string tags to aid in filtering Senders. Values should be represented as an array of strings. Can be empty.
-	DeviceID     string              `json:"device_id"`      // Device ID which this Sender forms part of
-	ManifestHRef string              `json:"manifest_href"`  // HTTP URL to a file describing how to connect to the Sender (SDP for RTP)
+	ResourceCore
+	FlowID       string       `json:"flow_id"`       // ID of the Flow currently passing via this Sender
+	Transport    TransportURI `json:"transport"`     // Transport type used by the Sender in URN format
+	DeviceID     string       `json:"device_id"`     // Device ID which this Sender forms part of
+	ManifestHRef string       `json:"manifest_href"` // HTTP URL to a file describing how to connect to the Sender (SDP for RTP)
 }
 
 // Describes a Source
-type Source struct {
-	ID          string              `json:"id"`          // Globally unique identifier for the Source
-	Version     string              `json:"version"`     // String formatted TAI timestamp (<seconds>:<nanoseconds>) indicating precisely when an attribute of the resource last changed
-	Label       string              `json:"label"`       // Freeform string label for the Source
-	Description string              `json:"description"` // Detailed description of the Source
-	Format      FormatURI           `json:"format"`      // Format of the data coming from the Source as a URN
-	Caps        any                 `json:"caps"`        // Capabilities (not yet defined)
-	Tags        map[string][]string `json:"tags"`        // Key value set of freeform string tags to aid in filtering Sources. Values should be represented as an array of strings. Can be empty.
-	DeviceID    string              `json:"device_id"`   // Globally unique identifier for the Device which initially created the Source
-	Parents     []string            `json:"parents"`     // Array of UUIDs representing the Source IDs of Grains which came together at the input to this Source (may change over the lifetime of this Source)
+type SourceCore struct {
+	GrainRate SourceCoreGrainRate `json:"grain_rate,omitempty"` // Maximum number of Grains per second for Flows derived from this Source. Corresponding Flow Grain rates may override this attribute. Grain rate matches the frame rate for video (see NMOS Content Model). Specified for periodic Sources only.
+	Caps      any                 `json:"caps"`                 // Capabilities (not yet defined)
+	DeviceID  string              `json:"device_id"`            // Globally unique identifier for the Device which initially created the Source. This attribute is used to ensure referential integrity by registry implementations.
+	Parents   []string            `json:"parents"`              // Array of UUIDs representing the Source IDs of Grains which came together at the input to this Source (may change over the lifetime of this Source)
+	ClockName null.String         `json:"clock_name"`           // Reference to clock in the originating Node
 }
 
-// Object containing the 'sender_id' currently subscribed to. Sender_id should be null on initialisation.
-type ReceiverSubscription struct {
-	SenderID null.String `json:"sender_id"` // UUID of the Sender that this Receiver is currently subscribed to
-	Active   zero.Bool   `json:"active"`    // Not in spec, but usually implemented. True when sender_id is not null
+type SourceCoreGrainRate struct {
+	Numerator   int `json:"numerator"`             // Numerator
+	Denominator int `json:"denominator,omitempty"` // Denominator
+}
+
+func (r *SourceCoreGrainRate) UnmarshalJSON(data []byte) error {
+	var dataTest map[string]interface{}
+	err := json.Unmarshal(data, &dataTest)
+	if err != nil {
+		return err
+	}
+	_, denominator_ok := dataTest["denominator"]
+	err = json.Unmarshal(data, r)
+	if err != nil {
+		return err
+	}
+	if !denominator_ok {
+		r.Denominator = 1
+	}
+	return nil
+}
+
+func (r *SourceCoreGrainRate) MarshalJSON() ([]byte, error) {
+	rCopy := *r
+	// Omit field when default = 1
+	if rCopy.Denominator == 1 {
+		rCopy.Denominator = 0
+	}
+	return json.Marshal(rCopy)
+}
+
+// Describes an audio Source
+type SourceAudio struct {
+	SourceCore
+	Format   FormatURI            `json:"format"`   // Format of the data coming from the Source as a URN
+	Channels []SourceAudioChannel `json:"channels"` // Array of objects describing the audio channels
+}
+
+type SourceAudioChannel struct {
+	Label  string `json:"label"`  // Label for this channel (free text)
+	Symbol string `json:"symbol"` // Symbol for this channel (from VSF TR-03 Appendix A)
+}
+
+// Describes a generic Source
+type SourceGeneric struct {
+	SourceCore
+	Format FormatURI `json:"format"` // Format of the data coming from the Source as a URN
+}
+
+// Describes a Source
+// Used for JSON marshalling
+// Type indicates which pointer is non-nil
+type Source struct {
+	Type          SourceType
+	SourceGeneric *SourceGeneric
+	SourceAudio   *SourceAudio
+}
+
+func (s *Source) UnmarshalJSON(data []byte) error {
+	var dataTest map[string]interface{}
+	err := json.Unmarshal(data, &dataTest)
+	if err != nil {
+		return err
+	}
+	format, format_ok := dataTest["format"].(string)
+	if !format_ok {
+		return fmt.Errorf("unable to parse format for data: %s", string(data))
+	}
+	switch FormatURI(format) {
+	case FORMAT_AUDIO:
+		s.Type = SOURCE_TYPE_AUDIO
+		err = json.Unmarshal(data, s.SourceAudio)
+		if err != nil {
+			return err
+		}
+		return nil
+	case FORMAT_VIDEO:
+		s.Type = SOURCE_TYPE_GENERIC
+		err = json.Unmarshal(data, s.SourceGeneric)
+		if err != nil {
+			return err
+		}
+		return nil
+	case FORMAT_DATA:
+		s.Type = SOURCE_TYPE_GENERIC
+		err = json.Unmarshal(data, s.SourceGeneric)
+		if err != nil {
+			return err
+		}
+		return nil
+	case FORMAT_MUX:
+		s.Type = SOURCE_TYPE_GENERIC
+		err = json.Unmarshal(data, s.SourceGeneric)
+		if err != nil {
+			return err
+		}
+		return nil
+	default:
+		return fmt.Errorf("unable to parse format for data: %s", string(data))
+	}
+}
+
+func (s *Source) MarshalJSON() ([]byte, error) {
+	switch s.Type {
+	case SOURCE_TYPE_AUDIO:
+		return json.Marshal(s.SourceAudio)
+	case SOURCE_TYPE_GENERIC:
+		return json.Marshal(s.SourceGeneric)
+	default:
+		return nil, fmt.Errorf("could not marshal source %v", *s)
+	}
 }

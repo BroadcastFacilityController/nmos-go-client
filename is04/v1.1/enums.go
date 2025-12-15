@@ -142,6 +142,15 @@ const (
 	QUERY_WS_RECEIVERS QueryAPISubscriptionWSGrainGrainTopic = "/receivers/"
 )
 
+type ReceiverType string
+
+const (
+	RECEIVER_TYPE_VIDEO ReceiverType = "receiver_video"
+	RECEIVER_TYPE_AUDIO ReceiverType = "receiver_audio"
+	RECEIVER_TYPE_DATA  ReceiverType = "receiver_data"
+	RECEIVER_TYPE_MUX   ReceiverType = "receiver_mux"
+)
+
 type RegistrationPostType string
 
 const (
@@ -151,4 +160,11 @@ const (
 	REGISTRATION_TYPE_RECEIVER RegistrationPostType = "receiver"
 	REGISTRATION_TYPE_SOURCE   RegistrationPostType = "source"
 	REGISTRATION_TYPE_FLOW     RegistrationPostType = "flow"
+)
+
+type SourceType string
+
+const (
+	SOURCE_TYPE_GENERIC SourceType = "source_generic"
+	SOURCE_TYPE_AUDIO   SourceType = "source_audio"
 )
