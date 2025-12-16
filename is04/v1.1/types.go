@@ -45,9 +45,11 @@ func (c *Clock) UnmarshalJSON(data []byte) error {
 	switch ClockRefType(clockType) {
 	case CLOCK_REF_INTERNAL:
 		c.Type = CLOCK_REF_INTERNAL
+		c.ClockInternal = &ClockInternal{}
 		return json.Unmarshal(data, c.ClockInternal)
 	case CLOCK_REF_PTP:
 		c.Type = CLOCK_REF_PTP
+		c.ClockPTP = &ClockPTP{}
 		return json.Unmarshal(data, c.ClockPTP)
 	default:
 		return fmt.Errorf("unable to parse ref_type for data: %s", string(data))
@@ -62,6 +64,17 @@ func (c *Clock) MarshalJSON() ([]byte, error) {
 		return json.Marshal(c.ClockInternal)
 	default:
 		return nil, fmt.Errorf("could not marshal clock %v", *c)
+	}
+}
+
+func (c Clock) String() string {
+	switch c.Type {
+	case CLOCK_REF_INTERNAL:
+		return fmt.Sprint(*c.ClockInternal)
+	case CLOCK_REF_PTP:
+		return fmt.Sprint(*c.ClockPTP)
+	default:
+		return ""
 	}
 }
 
@@ -522,31 +535,39 @@ func (r *Receiver) UnmarshalJSON(data []byte) error {
 	switch FormatURI(format) {
 	case FORMAT_VIDEO:
 		r.Type = RECEIVER_TYPE_VIDEO
-		err = json.Unmarshal(data, r.ReceiverVideo)
+		var rxTemp ReceiverVideo
+		err = json.Unmarshal(data, &rxTemp)
 		if err != nil {
 			return err
 		}
+		r.ReceiverVideo = &rxTemp
 		return nil
 	case FORMAT_AUDIO:
 		r.Type = RECEIVER_TYPE_AUDIO
-		err = json.Unmarshal(data, r.ReceiverAudio)
+		var rxTemp ReceiverAudio
+		err = json.Unmarshal(data, &rxTemp)
 		if err != nil {
 			return err
 		}
+		r.ReceiverAudio = &rxTemp
 		return nil
 	case FORMAT_DATA:
 		r.Type = RECEIVER_TYPE_DATA
-		err = json.Unmarshal(data, r.ReceiverData)
+		var rxTemp ReceiverData
+		err = json.Unmarshal(data, &rxTemp)
 		if err != nil {
 			return err
 		}
+		r.ReceiverData = &rxTemp
 		return nil
 	case FORMAT_MUX:
 		r.Type = RECEIVER_TYPE_MUX
-		err = json.Unmarshal(data, r.ReceiverMux)
+		var rxTemp ReceiverMux
+		err = json.Unmarshal(data, &rxTemp)
 		if err != nil {
 			return err
 		}
+		r.ReceiverMux = &rxTemp
 		return nil
 	default:
 		return fmt.Errorf("unable to parse format for data: %s", string(data))
@@ -565,6 +586,21 @@ func (r *Receiver) MarshalJSON() ([]byte, error) {
 		return json.Marshal(r.ReceiverMux)
 	default:
 		return nil, fmt.Errorf("unable to marshal receiver %v", *r)
+	}
+}
+
+func (r Receiver) String() string {
+	switch r.Type {
+	case RECEIVER_TYPE_VIDEO:
+		return fmt.Sprint(*r.ReceiverVideo)
+	case RECEIVER_TYPE_AUDIO:
+		return fmt.Sprint(*r.ReceiverAudio)
+	case RECEIVER_TYPE_DATA:
+		return fmt.Sprint(*r.ReceiverData)
+	case RECEIVER_TYPE_MUX:
+		return fmt.Sprint(*r.ReceiverMux)
+	default:
+		return ""
 	}
 }
 
@@ -667,31 +703,39 @@ func (s *Source) UnmarshalJSON(data []byte) error {
 	switch FormatURI(format) {
 	case FORMAT_AUDIO:
 		s.Type = SOURCE_TYPE_AUDIO
-		err = json.Unmarshal(data, s.SourceAudio)
+		var srcTemp SourceAudio
+		err = json.Unmarshal(data, &srcTemp)
 		if err != nil {
 			return err
 		}
+		s.SourceAudio = &srcTemp
 		return nil
 	case FORMAT_VIDEO:
 		s.Type = SOURCE_TYPE_GENERIC
-		err = json.Unmarshal(data, s.SourceGeneric)
+		var srcTemp SourceGeneric
+		err = json.Unmarshal(data, &srcTemp)
 		if err != nil {
 			return err
 		}
+		s.SourceGeneric = &srcTemp
 		return nil
 	case FORMAT_DATA:
 		s.Type = SOURCE_TYPE_GENERIC
-		err = json.Unmarshal(data, s.SourceGeneric)
+		var srcTemp SourceGeneric
+		err = json.Unmarshal(data, &srcTemp)
 		if err != nil {
 			return err
 		}
+		s.SourceGeneric = &srcTemp
 		return nil
 	case FORMAT_MUX:
 		s.Type = SOURCE_TYPE_GENERIC
-		err = json.Unmarshal(data, s.SourceGeneric)
+		var srcTemp SourceGeneric
+		err = json.Unmarshal(data, &srcTemp)
 		if err != nil {
 			return err
 		}
+		s.SourceGeneric = &srcTemp
 		return nil
 	default:
 		return fmt.Errorf("unable to parse format for data: %s", string(data))
@@ -706,5 +750,16 @@ func (s *Source) MarshalJSON() ([]byte, error) {
 		return json.Marshal(s.SourceGeneric)
 	default:
 		return nil, fmt.Errorf("could not marshal source %v", *s)
+	}
+}
+
+func (s Source) String() string {
+	switch s.Type {
+	case SOURCE_TYPE_AUDIO:
+		return fmt.Sprint(*s.SourceAudio)
+	case SOURCE_TYPE_GENERIC:
+		return fmt.Sprint(*s.SourceGeneric)
+	default:
+		return ""
 	}
 }

@@ -23,7 +23,7 @@ func main() {
 			// IS-04 Node
 			fmt.Print("Versions: ")
 			fmt.Println(endpoint.IS04().GetAPIVersions(api))
-			fmt.Print("V1.0: Sources: ")
+			fmt.Print("V1.0: Node: ")
 			fmt.Println(endpoint.IS04().V1_0().NodeGetSelf())
 			fmt.Print("V1.0: Flows: ")
 			fmt.Println(endpoint.IS04().V1_0().NodeGetFlows())
@@ -31,7 +31,7 @@ func main() {
 			fmt.Println(endpoint.IS04().V1_0().NodeGetDevices())
 			fmt.Print("V1.0: Senders: ")
 			fmt.Println(endpoint.IS04().V1_0().NodeGetSenders())
-			fmt.Print("V1.1: Sources: ")
+			fmt.Print("V1.1: Node: ")
 			fmt.Println(endpoint.IS04().V1_1().NodeGetSelf())
 			fmt.Print("V1.1: Flows: ")
 			fmt.Println(endpoint.IS04().V1_1().NodeGetFlows())
