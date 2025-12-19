@@ -1,6 +1,7 @@
 package common
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -54,6 +55,19 @@ func HighestAPIVersion(apis []APIVersion) APIVersion {
 		}
 	}
 	return highestVersion
+}
+
+func (v *APIVersion) UnmarshalJSON(data []byte) error {
+	var resultStr string
+	err := json.Unmarshal(data, &resultStr)
+	if err != nil {
+		return err
+	}
+	v, err = NewAPIVersionFromString(resultStr)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (v APIVersion) String() string {

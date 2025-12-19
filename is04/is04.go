@@ -107,6 +107,44 @@ func (s *IS04) fetchNodeAPIVersions() error {
 	return nil
 }
 
+func (s *IS04) fetchQueryAPIVersions() error {
+	if !s.HasAPI(common.QUERY) {
+		return fmt.Errorf("query api not supported by receiver")
+	}
+	url := s.href + "/query"
+	request, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return err
+	}
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		return err
+	}
+	if response.StatusCode != http.StatusOK {
+		return fmt.Errorf("bad response code. got %d, wanted %d", response.StatusCode, http.StatusOK)
+	}
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
+	var responseJson []string
+	err = json.Unmarshal(responseBody, &responseJson)
+	if err != nil {
+		return err
+	}
+	versions := make([]common.APIVersion, 0)
+	for _, line := range responseJson {
+		line = strings.Trim(line, "/") // Remove trailing slashes
+		version, err := common.NewAPIVersionFromString(line)
+		if err != nil {
+			return err
+		}
+		versions = append(versions, *version)
+	}
+	s.supportedQueryAPIVersions = versions
+	return nil
+}
+
 func (s *IS04) GetAPIs() ([]common.APIType, error) {
 	err := s.fetchAPIs()
 	if err != nil {
@@ -124,6 +162,8 @@ func (s *IS04) GetAPIVersions(api common.APIType) ([]common.APIVersion, error) {
 		s.fetchNodeAPIVersions()
 		return s.supportedNodeAPIVersions, nil
 	case common.QUERY:
+		s.fetchQueryAPIVersions()
+		return s.supportedQueryAPIVersions, nil
 	}
 	return nil, fmt.Errorf("could not fetch versions for api %s", api)
 }

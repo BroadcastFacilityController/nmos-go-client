@@ -1,4 +1,4 @@
-package is04v1_1
+package is04v1_2
 
 import (
 	"encoding/json"
@@ -6,7 +6,6 @@ import (
 
 	"github.com/BroadcastFacilityController/nmos-go-client/common"
 	"github.com/guregu/null/v6"
-	"github.com/guregu/null/v6/zero"
 )
 
 // Describes a clock with no external reference
@@ -91,9 +90,9 @@ type ResourceCore struct {
 type Device struct {
 	ResourceCore
 	Type      DeviceTypeURI `json:"type"`      // Device type URN
-	NodeID    string        `json:"node_id"`   // Globally unique identifier for the Node which initially created the Device
-	Senders   []string      `json:"senders"`   // UUIDs of Senders attached to the Device
-	Receivers []string      `json:"receivers"` // UUIDs of Receivers attached to the Device
+	NodeID    string        `json:"node_id"`   // Globally unique identifier for the Node which initially created the Device. This attribute is used to ensure referential integrity by registry implementations.
+	Senders   []string      `json:"senders"`   // UUIDs of Senders attached to the Device (deprecated)
+	Receivers []string      `json:"receivers"` // UUIDs of Receivers attached to the Device (deprecated)
 }
 
 // Describes the standard error response which is returned with HTTP codes 400 and above
@@ -136,7 +135,7 @@ type FlowVideo struct {
 // Describes a raw Video Flow
 type FlowVideoRaw struct {
 	FlowVideo
-	MediaType  IANAMediaType           `json:"media_type"` // Subclassification of the format using IANA assigned media types
+	MediaType  string                  `json:"media_type"` // Subclassification of the format using IANA assigned media types
 	Components []FlowVideoRawComponent `json:"components"` // Array of objects describing the components
 }
 
@@ -150,7 +149,7 @@ type FlowVideoRawComponent struct {
 // Describes a coded Video Flow
 type FlowVideoCoded struct {
 	FlowVideo
-	MediaType IANAMediaType `json:"media_type"` // Subclassification of the format using IANA assigned media types
+	MediaType string `json:"media_type"` // Subclassification of the format using IANA assigned media types
 }
 
 // Describes an audio Flow
@@ -168,28 +167,28 @@ type FlowAudioSampleRate struct {
 // Describes a raw audio Flow
 type FlowAudioRaw struct {
 	FlowAudio
-	MediaType IANAMediaType `json:"media_type"` // Subclassification of the format using IANA assigned media types
-	BitDepth  int           `json:"bit_depth"`  // Bit depth of the audio samples
+	MediaType string `json:"media_type"` // Subclassification of the format using IANA assigned media types
+	BitDepth  int    `json:"bit_depth"`  // Bit depth of the audio samples
 }
 
 // Describes a coded audio Flow
 type FlowAudioCoded struct {
 	FlowAudio
-	MediaType IANAMediaType `json:"media_type"` // Subclassification of the format using IANA assigned media types
+	MediaType string `json:"media_type"` // Subclassification of the format using IANA assigned media types
 }
 
 // Describes a generic data Flow
 type FlowData struct {
 	FlowCore
-	Format    FormatURI     `json:"format"`     // Format of the data coming from the Flow as a URN
-	MediaType IANAMediaType `json:"media_type"` // Subclassification of the format using IANA assigned media types
+	Format    FormatURI `json:"format"`     // Format of the data coming from the Flow as a URN
+	MediaType string    `json:"media_type"` // Subclassification of the format using IANA assigned media types
 }
 
 // Describes an SDI ancillary Flow
 type FlowSDIANCData struct {
 	FlowCore
 	Format    FormatURI      `json:"format"`     // Format of the data coming from the Flow as a URN
-	MediaType IANAMediaType  `json:"media_type"` // Subclassification of the format using IANA assigned media types
+	MediaType string         `json:"media_type"` // Subclassification of the format using IANA assigned media types
 	DID_SDID  []FlowDID_SDID `json:"DID_SDID"`   // List of Data identification and Secondary data identification words
 }
 
@@ -202,8 +201,8 @@ type FlowDID_SDID struct {
 // Describes a mux Flow
 type FlowMux struct {
 	FlowCore
-	Format    FormatURI     `json:"format"`     // Format of the data coming from the Flow as a URN
-	MediaType IANAMediaType `json:"media_type"` // Subclassification of the format using IANA assigned media types
+	Format    FormatURI `json:"format"`     // Format of the data coming from the Flow as a URN
+	MediaType string    `json:"media_type"` // Subclassification of the format using IANA assigned media types
 }
 
 // Used purely for json unmarshalling and finding the listed type.
@@ -234,7 +233,7 @@ func (f *Flow) UnmarshalJSON(data []byte) error {
 	switch FormatURI(format) {
 	case FORMAT_VIDEO:
 		// Video
-		mediaType, mediaType_ok := dataTest["media_type"].(IANAMediaType)
+		mediaType, mediaType_ok := dataTest["media_type"].(string)
 		if !mediaType_ok {
 			return fmt.Errorf("unable to parse format for data: %s", string(data))
 		}
@@ -257,7 +256,7 @@ func (f *Flow) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	case FORMAT_AUDIO:
-		mediaType, mediaType_ok := dataTest["media_type"].(IANAMediaType)
+		mediaType, mediaType_ok := dataTest["media_type"].(string)
 		if !mediaType_ok {
 			return fmt.Errorf("unable to parse format for data: %s", string(data))
 		}
@@ -304,7 +303,7 @@ func (f *Flow) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	case FORMAT_DATA:
-		mediaType, mediaType_ok := dataTest["media_type"].(IANAMediaType)
+		mediaType, mediaType_ok := dataTest["media_type"].(string)
 		if !mediaType_ok {
 			return fmt.Errorf("unable to parse format for data: %s", string(data))
 		}
@@ -376,17 +375,24 @@ type NodeAPIEndpoint struct {
 // Describes the Node and the services which run on it
 type Node struct {
 	ResourceCore
-	HRef     string        `json:"href"`               // HTTP access href for the Node's API (deprecated)
-	Hostname string        `json:"hostname,omitempty"` // Node hostname (optional, deprecated)
-	API      NodeAPI       `json:"api"`                // URL fragments required to connect to the Node API
-	Caps     any           `json:"caps"`               // Capabilities (not yet defined)
-	Services []NodeService `json:"services"`           // Array of objects containing a URN format type and href
-	Clocks   []Clock       `json:"clocks"`             // Clocks made available to Devices owned by this Node
+	HRef       string          `json:"href"`               // HTTP access href for the Node's API (deprecated)
+	Hostname   string          `json:"hostname,omitempty"` // Node hostname (optional, deprecated)
+	API        NodeAPI         `json:"api"`                // URL fragments required to connect to the Node API
+	Caps       any             `json:"caps"`               // Capabilities (not yet defined)
+	Services   []NodeService   `json:"services"`           // Array of objects containing a URN format type and href
+	Clocks     []Clock         `json:"clocks"`             // Clocks made available to Devices owned by this Node
+	Interfaces []NodeInterface `json:"interfaces"`         // Network interfaces made available to devices owned by this Node. Port IDs and Chassis IDs are used to inform topology discovery via IS-06, and require that interfaces implement ARP at a minimum, and ideally LLDP.
 }
 
 type NodeService struct {
 	HRef string `json:"href"` // URL to reach a service running on the Node
 	Type string `json:"type"` // URN identifying the type of service
+}
+
+type NodeInterface struct {
+	ChassisID null.String `json:"chassis_id"` // Chassis ID of the interface, as signalled in LLDP from this node. Set to null where LLDP is unsuitable for use (ie. virtualised environments)
+	PortID    string      `json:"port_id"`    // Port ID of the interface, as signalled in LLDP or via ARP responses from this node. Must be a MAC address
+	Name      string      `json:"name"`       // Name of the interface (unique in scope of this node).  This attribute is used by sub-resources of this node such as senders and receivers to refer to interfaces to which they are bound.
 }
 
 // A single subscription resource registered with a Query API
@@ -414,9 +420,9 @@ type QueryAPISubscriptionWSGrain struct {
 	GrainType         QueryAPISubscriptionWSGrainType     `json:"grain_type"`         // Type of data contained within the 'grain' attribute's payload
 	SourceID          string                              `json:"source_id"`          // Source ID of the Query API instance issuing the data Grain
 	FlowID            string                              `json:"flow_id"`            // Subscription ID under the /subscriptions/ resource of the Query API
-	OriginTimestamp   string                              `json:"origin_timestamp"`   // TAI timestamp at which this data Grain was generated in the format <ts_secs>:<ts_nsecs>
-	SyncTimestamp     string                              `json:"sync_timestamp"`     // TAI timestamp at which this data Grain was generated in the format <ts_secs>:<ts_nsecs>
-	CreationTimestamp string                              `json:"creation_timestamp"` // TAI timestamp at which this data Grain was generated in the format <ts_secs>:<ts_nsecs>
+	OriginTimestamp   string                              `json:"origin_timestamp"`   // TAI timestamp at which this data Grain's payload was generated in the format <ts_secs>:<ts_nsecs>
+	SyncTimestamp     string                              `json:"sync_timestamp"`     // TAI timestamp at which this data Grain's payload was generated in the format <ts_secs>:<ts_nsecs>
+	CreationTimestamp string                              `json:"creation_timestamp"` // TAI timestamp at which this data Grain's payload was generated in the format <ts_secs>:<ts_nsecs>
 	Rate              QueryAPISubscriptionWSGrainRate     `json:"rate"`               // Rate at which Grains will be received within this Flow (if applicable)
 	Duration          QueryAPISubscriptionWSGrainDuration `json:"duration"`           // Duration over which this Grain is valid or should be presented (if applicable)
 	Grain             QueryAPISubscriptionWSGrainGrain    `json:"grain"`              // Payload of the data Grain
@@ -451,15 +457,16 @@ type QueryAPISubscriptionWSGrainGrainData struct {
 // Describes a receiver
 type ReceiverCore struct {
 	ResourceCore
-	DeviceID     string               `json:"device_id"`    // Device ID which this Receiver forms part of. This attribute is used to ensure referential integrity by registry implementations.
-	Transport    TransportURI         `json:"transport"`    // Transport type accepted by the Receiver in URN format
-	Subscription ReceiverSubscription `json:"subscription"` // Object containing the 'sender_id' currently subscribed to. Sender_id should be null on initialisation.
+	DeviceID          string               `json:"device_id"`          // Device ID which this Receiver forms part of. This attribute is used to ensure referential integrity by registry implementations.
+	Transport         TransportURI         `json:"transport"`          // Transport type accepted by the Receiver in URN format
+	InterfaceBindings []string             `json:"interface_bindings"` // Binding of Receiver ingress ports to interfaces on the parent Node. Should contain a single network interface unless a redundancy mechanism such as ST.2022-7 is in use, in which case each 'leg' should have its matching interface listed. Where the redundancy mechanism receives more than one copy of the stream via the same interface, that interface should be listed a corresponding number of times.
+	Subscription      ReceiverSubscription `json:"subscription"`       // Object containing the 'sender_id' currently subscribed to. Sender_id should be null on initialisation, or when connected to a non-NMOS Sender.
 }
 
 // Object containing the 'sender_id' currently subscribed to. Sender_id should be null on initialisation.
 type ReceiverSubscription struct {
 	SenderID null.String `json:"sender_id"` // UUID of the Sender that this Receiver is currently subscribed to
-	Active   zero.Bool   `json:"active"`    // Not in spec, but usually implemented. True when sender_id is not null
+	Active   bool        `json:"active"`    // Receiver is enabled and configured with a Sender's connection parameters
 }
 
 // Describes an audio Receiver
@@ -471,7 +478,7 @@ type ReceiverAudio struct {
 
 // Capabilities
 type ReceiverAudioCaps struct {
-	MediaTypes []IANAMediaType `json:"media_types"` // Subclassification of the formats accepted using IANA assigned media types
+	MediaTypes []string `json:"media_types"` // Subclassification of the formats accepted using IANA assigned media types
 }
 
 // Describes a data Receiver
@@ -483,7 +490,7 @@ type ReceiverData struct {
 
 // Capabilities
 type ReceiverDataCaps struct {
-	MediaTypes []IANAMediaType `json:"media_types"` // Subclassification of the formats accepted using IANA assigned media types
+	MediaTypes []string `json:"media_types"` // Subclassification of the formats accepted using IANA assigned media types
 }
 
 // Describes a mux Receiver
@@ -495,7 +502,7 @@ type ReceiverMux struct {
 
 // Capabilities
 type ReceiverMuxCaps struct {
-	MediaTypes []IANAMediaType `json:"media_types"` // Subclassification of the formats accepted using IANA assigned media types
+	MediaTypes []string `json:"media_types"` // Subclassification of the formats accepted using IANA assigned media types
 }
 
 // Describes a video Receiver
@@ -507,7 +514,7 @@ type ReceiverVideo struct {
 
 // Capabilities
 type ReceiverVideoCaps struct {
-	MediaTypes []IANAMediaType `json:"media_types"` // Subclassification of the formats accepted using IANA assigned media types
+	MediaTypes []string `json:"media_types"` // Subclassification of the formats accepted using IANA assigned media types
 }
 
 // Describes a receiver.
@@ -617,10 +624,18 @@ type RegistrationPost struct {
 // Describes a sender
 type Sender struct {
 	ResourceCore
-	FlowID       string       `json:"flow_id"`       // ID of the Flow currently passing via this Sender
-	Transport    TransportURI `json:"transport"`     // Transport type used by the Sender in URN format
-	DeviceID     string       `json:"device_id"`     // Device ID which this Sender forms part of
-	ManifestHRef string       `json:"manifest_href"` // HTTP URL to a file describing how to connect to the Sender (SDP for RTP)
+	Caps              any                `json:"caps"`               // Capabilities of this sender
+	FlowID            string             `json:"flow_id"`            // ID of the Flow currently passing via this Sender
+	Transport         TransportURI       `json:"transport"`          // Transport type used by the Sender in URN format
+	DeviceID          string             `json:"device_id"`          // Device ID which this Sender forms part of. This attribute is used to ensure referential integrity by registry implementations.
+	ManifestHRef      string             `json:"manifest_href"`      // HTTP URL to a file describing how to connect to the Sender (SDP for RTP). The Sender's 'version' attribute should be updated if the contents of this file are modified. This URL may return an HTTP 404 where the 'active' parameter in the 'subscription' object is present and set to false (v1.2+ only).
+	InterfaceBindings []string           `json:"interface_bindings"` // Binding of Sender egress ports to interfaces on the parent Node. Should contain a single network interface unless a redundancy mechanism such as ST.2022-7 is in use, in which case each 'leg' should have its matching interface listed. Where the redundancy mechanism sends more than one copy of the stream via the same interface, that interface should be listed a corresponding number of times.
+	Subscription      SenderSubscription `json:"subscription"`       // Object containing the 'receiver_id' currently subscribed to (unicast only). Receiver_id should be null on initialisation, or when connected to a non-NMOS unicast Receiver.
+}
+
+type SenderSubscription struct {
+	ReceiverID null.String `json:"receiver_id"` // UUID of the Receiver that this Sender is currently subscribed to
+	Active     bool        `json:"active"`      // Sender is enabled and configured to stream data to a single Receiver (unicast), or to the network via multicast or a pull-based mechanism
 }
 
 // Describes a Source

@@ -8,58 +8,110 @@ import (
 )
 
 func main() {
-	endpoint, err := nmos.NewNMOSEndpoint("http://10.10.71.11:80/x-nmos")
-	if err != nil {
-		panic(err)
+
+	endpointHRefs := []string{
+		"http://10.10.60.10:8080/x-nmos",
+		"http://10.10.71.11:80/x-nmos",
 	}
-	fmt.Println(endpoint.GetSupportedAPIs())
-	apis, _ := endpoint.GetSupportedAPIs()
-	fmt.Println(endpoint.IS04().GetAPIs())
-	fmt.Println(endpoint.IS04().GetAPIVersions(common.NODE))
-	for _, api := range apis {
-		fmt.Println(api)
-		switch api {
-		case common.NODE:
-			// IS-04 Node
-			fmt.Print("Versions: ")
-			fmt.Println(endpoint.IS04().GetAPIVersions(api))
-			fmt.Print("V1.0: Node: ")
-			fmt.Println(endpoint.IS04().V1_0().NodeGetSelf())
-			fmt.Print("V1.0: Flows: ")
-			fmt.Println(endpoint.IS04().V1_0().NodeGetFlows())
-			fmt.Print("V1.0: Devices: ")
-			fmt.Println(endpoint.IS04().V1_0().NodeGetDevices())
-			fmt.Print("V1.0: Senders: ")
-			fmt.Println(endpoint.IS04().V1_0().NodeGetSenders())
-			fmt.Print("V1.1: Node: ")
-			fmt.Println(endpoint.IS04().V1_1().NodeGetSelf())
-			fmt.Print("V1.1: Flows: ")
-			fmt.Println(endpoint.IS04().V1_1().NodeGetFlows())
-			fmt.Print("V1.1: Devices: ")
-			fmt.Println(endpoint.IS04().V1_1().NodeGetDevices())
-			fmt.Print("V1.1: Senders: ")
-			fmt.Println(endpoint.IS04().V1_1().NodeGetSenders())
-			fmt.Print("V1.1: Receivers: ")
-			fmt.Println(endpoint.IS04().V1_1().NodeGetReceivers())
-			//fmt.Print("Receivers: ")
-			//fmt.Println(endpoint.GetNodeAPI().GetV1_0().GetReceivers())
-			// Check unpatch
-			//fmt.Println(endpoint.GetNodeAPI().GetV1_0().PutReceiverSubscription("25a670fe-7d37-56e9-9e29-478654a8f275", nil))
-			// Check patch
-			//sender := node_v1_0.Sender{
-			//	ID:           "9edc30a2-133f-591e-840c-cee8a289259b",
-			//	FlowID:       "8a714a98-f688-5193-8db5-84c772cee526",
-			//	DeviceID:     "ed400049-36ed-525e-933c-9c223eaebd81",
-			//	Description:  "Telestream SPG9000/sender/Video1",
-			//	Label:        "SPG-PRI SPG-PRI Video 1 sender",
-			//	ManifestHRef: "http://10.10.251.2:80/x-manifest/senders/9edc30a2-133f-591e-840c-cee8a289259b/manifest",
-			//	Tags: map[string][]string{
-			//		"urn:x-nmos:tag:grouphint/v1.0": {"SPG9000:sender Video1"},
-			//	},
-			//	Transport: node_v1_0.RTP,
-			//	Version:   "1761135285:780319076",
-			//}
-			//fmt.Println(endpoint.GetNodeAPI().GetV1_0().PutReceiverSubscription("25a670fe-7d37-56e9-9e29-478654a8f275", &sender))
+	endpoints := make([]nmos.NMOSEndpoint, len(endpointHRefs))
+	for i, href := range endpointHRefs {
+		endpoint, err := nmos.NewNMOSEndpoint(href)
+		if err != nil {
+			panic(err)
+		}
+		endpoints[i] = *endpoint
+	}
+
+	for i, endpoint := range endpoints {
+		fmt.Println("------------------------------------------------------------")
+		fmt.Println("Endpoint HRef: ", endpointHRefs[i])
+		fmt.Print("Endpoint APIs: ")
+		apis, err := endpoint.GetSupportedAPIs()
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(apis)
+		for _, api := range apis {
+			fmt.Println("------------------------------")
+			fmt.Println("API: ", api)
+			switch api {
+			case common.NODE:
+				versions, err := endpoint.IS04().GetAPIVersions(api)
+				if err != nil {
+					panic(err)
+				}
+				fmt.Println("Versions: ", versions)
+				for _, vers := range versions {
+					fmt.Println("----------")
+					fmt.Println("Version: ", vers)
+					if vers.Equals(common.NewAPIVersion(1, 0)) {
+						fmt.Println("Node:")
+						fmt.Println(endpoint.IS04().V1_0().NodeGetSelf())
+						fmt.Println("Devices:")
+						fmt.Println(endpoint.IS04().V1_0().NodeGetDevices())
+						fmt.Println("Flows:")
+						fmt.Println(endpoint.IS04().V1_0().NodeGetFlows())
+						fmt.Println("Sources:")
+						fmt.Println(endpoint.IS04().V1_0().NodeGetSources())
+						fmt.Println("Senders:")
+						fmt.Println(endpoint.IS04().V1_0().NodeGetSenders())
+						fmt.Println("Receivers:")
+						fmt.Println(endpoint.IS04().V1_0().NodeGetReceivers())
+					}
+					if vers.Equals(common.NewAPIVersion(1, 1)) {
+						fmt.Println("Nodes:")
+						fmt.Println(endpoint.IS04().V1_1().NodeGetSelf())
+						fmt.Println("Devices:")
+						fmt.Println(endpoint.IS04().V1_1().NodeGetDevices())
+						fmt.Println("Flows:")
+						fmt.Println(endpoint.IS04().V1_1().NodeGetFlows())
+						fmt.Println("Sources:")
+						fmt.Println(endpoint.IS04().V1_1().NodeGetSources())
+						fmt.Println("Senders:")
+						fmt.Println(endpoint.IS04().V1_1().NodeGetSenders())
+						fmt.Println("Receivers:")
+						fmt.Println(endpoint.IS04().V1_1().NodeGetReceivers())
+					}
+				}
+			case common.QUERY:
+				versions, err := endpoint.IS04().GetAPIVersions(api)
+				if err != nil {
+					panic(err)
+				}
+				fmt.Println("Versions: ", versions)
+				for _, vers := range versions {
+					fmt.Println("----------")
+					fmt.Println("Version: ", vers)
+					if vers.Equals(common.NewAPIVersion(1, 0)) {
+						fmt.Println("Nodes:")
+						fmt.Println(endpoint.IS04().V1_0().QueryGetNodes())
+						//fmt.Println("Devices:")
+						//fmt.Println(endpoint.IS04().V1_0().QueryGetDevices())
+						//fmt.Println("Flows:")
+						//fmt.Println(endpoint.IS04().V1_0().QueryGetFlows())
+						//fmt.Println("Sources:")
+						//fmt.Println(endpoint.IS04().V1_0().QueryGetSources())
+						//fmt.Println("Senders:")
+						//fmt.Println(endpoint.IS04().V1_0().QueryGetSenders())
+						//fmt.Println("Receivers:")
+						//fmt.Println(endpoint.IS04().V1_0().QueryGetReceivers())
+					}
+					if vers.Equals(common.NewAPIVersion(1, 1)) {
+						fmt.Println("Nodes:")
+						fmt.Println(endpoint.IS04().V1_1().QueryGetNodes())
+						//fmt.Println("Devices:")
+						//fmt.Println(endpoint.IS04().V1_1().QueryGetDevices())
+						//fmt.Println("Flows:")
+						//fmt.Println(endpoint.IS04().V1_1().QueryGetFlows())
+						//fmt.Println("Sources:")
+						//fmt.Println(endpoint.IS04().V1_1().QueryGetSources())
+						//fmt.Println("Senders:")
+						//fmt.Println(endpoint.IS04().V1_1().QueryGetSenders())
+						//fmt.Println("Receivers:")
+						//fmt.Println(endpoint.IS04().V1_1().QueryGetReceivers())
+					}
+				}
+			}
 		}
 	}
 }

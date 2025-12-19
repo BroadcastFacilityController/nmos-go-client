@@ -42,7 +42,10 @@ func (n *NMOSEndpoint) GetSupportedAPIs() ([]common.APIType, error) {
 		return nil, errors.New("invalid response code")
 	}
 	var respParsed []string
-	json.NewDecoder(resp.Body).Decode(&respParsed)
+	err = json.NewDecoder(resp.Body).Decode(&respParsed)
+	if err != nil {
+		return nil, err
+	}
 	apis := make([]common.APIType, len(respParsed))
 	for i, str := range respParsed {
 		str = strings.ReplaceAll(str, "/", "")
