@@ -491,11 +491,32 @@ func (v *IS04V1_1) QueryGetSources() ([]Source, error) {
 	switch response.StatusCode {
 	case http.StatusOK:
 		// Default
-		respParsed, err := parseResponse[[]Source](response)
-		if err != nil {
-			return []Source{}, err
+		result := make([]Source, 0)
+		lastSince := "0:0"
+		for true {
+			respParsed, err := parseResponse[[]Source](response)
+			if err != nil {
+				return []Source{}, err
+			}
+			result = append(result, respParsed...)
+			// Check paging
+			limit := response.Header.Get("X-Paging-Until")
+			if limit == "" || limit == lastSince {
+				break
+			}
+			lastSince = limit
+			next := fmt.Sprintf("%s?paging.since=%s", url, limit)
+			reqNew, err := http.NewRequest(http.MethodGet, next, nil)
+			if err != nil {
+				return []Source{}, err
+			}
+			reqNew.Header.Add("Accept", "application/json")
+			response, err = http.DefaultClient.Do(reqNew)
+			if err != nil {
+				return []Source{}, err
+			}
 		}
-		return respParsed, nil
+		return result, nil
 	default:
 		return []Source{}, fmt.Errorf("bad response code. got %d", response.StatusCode)
 	}
@@ -546,11 +567,32 @@ func (v *IS04V1_1) QueryGetFlows() ([]Flow, error) {
 	switch response.StatusCode {
 	case http.StatusOK:
 		// Default
-		respParsed, err := parseResponse[[]Flow](response)
-		if err != nil {
-			return []Flow{}, err
+		result := make([]Flow, 0)
+		lastSince := "0:0"
+		for true {
+			respParsed, err := parseResponse[[]Flow](response)
+			if err != nil {
+				return []Flow{}, err
+			}
+			result = append(result, respParsed...)
+			// Check paging
+			limit := response.Header.Get("X-Paging-Until")
+			if limit == "" || limit == lastSince {
+				break
+			}
+			lastSince = limit
+			next := fmt.Sprintf("%s?paging.since=%s", url, limit)
+			reqNew, err := http.NewRequest(http.MethodGet, next, nil)
+			if err != nil {
+				return []Flow{}, err
+			}
+			reqNew.Header.Add("Accept", "application/json")
+			response, err = http.DefaultClient.Do(reqNew)
+			if err != nil {
+				return []Flow{}, err
+			}
 		}
-		return respParsed, nil
+		return result, nil
 	default:
 		return []Flow{}, fmt.Errorf("bad response code. got %d", response.StatusCode)
 	}
@@ -601,11 +643,32 @@ func (v *IS04V1_1) QueryGetDevices() ([]Device, error) {
 	switch response.StatusCode {
 	case http.StatusOK:
 		// Default
-		respParsed, err := parseResponse[[]Device](response)
-		if err != nil {
-			return []Device{}, err
+		result := make([]Device, 0)
+		lastSince := "0:0"
+		for true {
+			respParsed, err := parseResponse[[]Device](response)
+			if err != nil {
+				return []Device{}, err
+			}
+			result = append(result, respParsed...)
+			// Check paging
+			limit := response.Header.Get("X-Paging-Until")
+			if limit == "" || limit == lastSince {
+				break
+			}
+			lastSince = limit
+			next := fmt.Sprintf("%s?paging.since=%s", url, limit)
+			reqNew, err := http.NewRequest(http.MethodGet, next, nil)
+			if err != nil {
+				return []Device{}, err
+			}
+			reqNew.Header.Add("Accept", "application/json")
+			response, err = http.DefaultClient.Do(reqNew)
+			if err != nil {
+				return []Device{}, err
+			}
 		}
-		return respParsed, nil
+		return result, nil
 	default:
 		return []Device{}, fmt.Errorf("bad response code. got %d", response.StatusCode)
 	}
@@ -656,11 +719,32 @@ func (v *IS04V1_1) QueryGetSenders() ([]Sender, error) {
 	switch response.StatusCode {
 	case http.StatusOK:
 		// Default
-		respParsed, err := parseResponse[[]Sender](response)
-		if err != nil {
-			return []Sender{}, err
+		result := make([]Sender, 0)
+		lastSince := "0:0"
+		for true {
+			respParsed, err := parseResponse[[]Sender](response)
+			if err != nil {
+				return []Sender{}, err
+			}
+			result = append(result, respParsed...)
+			// Check paging
+			limit := response.Header.Get("X-Paging-Until")
+			if limit == "" || limit == lastSince {
+				break
+			}
+			lastSince = limit
+			next := fmt.Sprintf("%s?paging.since=%s", url, limit)
+			reqNew, err := http.NewRequest(http.MethodGet, next, nil)
+			if err != nil {
+				return []Sender{}, err
+			}
+			reqNew.Header.Add("Accept", "application/json")
+			response, err = http.DefaultClient.Do(reqNew)
+			if err != nil {
+				return []Sender{}, err
+			}
 		}
-		return respParsed, nil
+		return result, nil
 	default:
 		return []Sender{}, fmt.Errorf("bad response code. got %d", response.StatusCode)
 	}
@@ -711,11 +795,32 @@ func (v *IS04V1_1) QueryGetReceivers() ([]Receiver, error) {
 	switch response.StatusCode {
 	case http.StatusOK:
 		// Default
-		respParsed, err := parseResponse[[]Receiver](response)
-		if err != nil {
-			return []Receiver{}, err
+		result := make([]Receiver, 0)
+		lastSince := "0:0"
+		for true {
+			respParsed, err := parseResponse[[]Receiver](response)
+			if err != nil {
+				return []Receiver{}, err
+			}
+			result = append(result, respParsed...)
+			// Check paging
+			limit := response.Header.Get("X-Paging-Until")
+			if limit == "" || limit == lastSince {
+				break
+			}
+			lastSince = limit
+			next := fmt.Sprintf("%s?paging.since=%s", url, limit)
+			reqNew, err := http.NewRequest(http.MethodGet, next, nil)
+			if err != nil {
+				return []Receiver{}, err
+			}
+			reqNew.Header.Add("Accept", "application/json")
+			response, err = http.DefaultClient.Do(reqNew)
+			if err != nil {
+				return []Receiver{}, err
+			}
 		}
-		return respParsed, nil
+		return result, nil
 	default:
 		return []Receiver{}, fmt.Errorf("bad response code. got %d", response.StatusCode)
 	}
@@ -766,11 +871,32 @@ func (v *IS04V1_1) QueryGetSubscriptions() ([]QueryAPISubscription, error) {
 	switch response.StatusCode {
 	case http.StatusOK:
 		// Default
-		respParsed, err := parseResponse[[]QueryAPISubscription](response)
-		if err != nil {
-			return []QueryAPISubscription{}, err
+		result := make([]QueryAPISubscription, 0)
+		lastSince := "0:0"
+		for true {
+			respParsed, err := parseResponse[[]QueryAPISubscription](response)
+			if err != nil {
+				return []QueryAPISubscription{}, err
+			}
+			result = append(result, respParsed...)
+			// Check paging
+			limit := response.Header.Get("X-Paging-Until")
+			if limit == "" || limit == lastSince {
+				break
+			}
+			lastSince = limit
+			next := fmt.Sprintf("%s?paging.since=%s", url, limit)
+			reqNew, err := http.NewRequest(http.MethodGet, next, nil)
+			if err != nil {
+				return []QueryAPISubscription{}, err
+			}
+			reqNew.Header.Add("Accept", "application/json")
+			response, err = http.DefaultClient.Do(reqNew)
+			if err != nil {
+				return []QueryAPISubscription{}, err
+			}
 		}
-		return respParsed, nil
+		return result, nil
 	default:
 		return []QueryAPISubscription{}, fmt.Errorf("bad response code. got %d, wanted %d", response.StatusCode, http.StatusOK)
 	}
