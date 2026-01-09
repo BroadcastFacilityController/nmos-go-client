@@ -86,6 +86,20 @@ func main() {
 						fmt.Println("Receivers:")
 						fmt.Println(endpoint.IS04().V1_2().NodeGetReceivers())
 					}
+					if vers.Equals(common.NewAPIVersion(1, 3)) {
+						fmt.Println("Nodes:")
+						fmt.Println(endpoint.IS04().V1_3().NodeGetSelf())
+						fmt.Println("Devices:")
+						fmt.Println(endpoint.IS04().V1_3().NodeGetDevices())
+						fmt.Println("Flows:")
+						fmt.Println(endpoint.IS04().V1_3().NodeGetFlows())
+						fmt.Println("Sources:")
+						fmt.Println(endpoint.IS04().V1_3().NodeGetSources())
+						fmt.Println("Senders:")
+						fmt.Println(endpoint.IS04().V1_3().NodeGetSenders())
+						fmt.Println("Receivers:")
+						fmt.Println(endpoint.IS04().V1_3().NodeGetReceivers())
+					}
 				}
 			case common.QUERY:
 				versions, err := endpoint.IS04().GetAPIVersions(api)
@@ -127,6 +141,20 @@ func main() {
 					if vers.Equals(common.NewAPIVersion(1, 2)) {
 						fmt.Println("Nodes:")
 						fmt.Println(endpoint.IS04().V1_2().QueryGetNodes())
+						//fmt.Println("Devices:")
+						//fmt.Println(endpoint.IS04().V1_2().QueryGetDevices())
+						//fmt.Println("Flows:")
+						//fmt.Println(endpoint.IS04().V1_2().QueryGetFlows())
+						//fmt.Println("Sources:")
+						//fmt.Println(endpoint.IS04().V1_2().QueryGetSources())
+						//fmt.Println("Senders:")
+						//fmt.Println(endpoint.IS04().V1_2().QueryGetSenders())
+						//fmt.Println("Receivers:")
+						//fmt.Println(endpoint.IS04().V1_2().QueryGetReceivers())
+					}
+					if vers.Equals(common.NewAPIVersion(1, 3)) {
+						fmt.Println("Nodes:")
+						fmt.Println(endpoint.IS04().V1_3().QueryGetNodes())
 						//fmt.Println("Devices:")
 						//fmt.Println(endpoint.IS04().V1_2().QueryGetDevices())
 						//fmt.Println("Flows:")
