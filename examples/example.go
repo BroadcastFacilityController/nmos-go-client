@@ -11,7 +11,7 @@ func main() {
 
 	endpointHRefs := []string{
 		"http://10.10.60.10:8080/x-nmos",
-		"http://10.10.71.11:80/x-nmos",
+		//"http://10.10.71.11:80/x-nmos",
 	}
 	endpoints := make([]nmos.NMOSEndpoint, len(endpointHRefs))
 	for i, href := range endpointHRefs {
@@ -72,6 +72,20 @@ func main() {
 						fmt.Println("Receivers:")
 						fmt.Println(endpoint.IS04().V1_1().NodeGetReceivers())
 					}
+					if vers.Equals(common.NewAPIVersion(1, 2)) {
+						fmt.Println("Nodes:")
+						fmt.Println(endpoint.IS04().V1_2().NodeGetSelf())
+						fmt.Println("Devices:")
+						fmt.Println(endpoint.IS04().V1_2().NodeGetDevices())
+						fmt.Println("Flows:")
+						fmt.Println(endpoint.IS04().V1_2().NodeGetFlows())
+						fmt.Println("Sources:")
+						fmt.Println(endpoint.IS04().V1_2().NodeGetSources())
+						fmt.Println("Senders:")
+						fmt.Println(endpoint.IS04().V1_2().NodeGetSenders())
+						fmt.Println("Receivers:")
+						fmt.Println(endpoint.IS04().V1_2().NodeGetReceivers())
+					}
 				}
 			case common.QUERY:
 				versions, err := endpoint.IS04().GetAPIVersions(api)
@@ -109,6 +123,20 @@ func main() {
 						//fmt.Println(endpoint.IS04().V1_1().QueryGetSenders())
 						//fmt.Println("Receivers:")
 						//fmt.Println(endpoint.IS04().V1_1().QueryGetReceivers())
+					}
+					if vers.Equals(common.NewAPIVersion(1, 2)) {
+						fmt.Println("Nodes:")
+						fmt.Println(endpoint.IS04().V1_2().QueryGetNodes())
+						//fmt.Println("Devices:")
+						//fmt.Println(endpoint.IS04().V1_2().QueryGetDevices())
+						//fmt.Println("Flows:")
+						//fmt.Println(endpoint.IS04().V1_2().QueryGetFlows())
+						//fmt.Println("Sources:")
+						//fmt.Println(endpoint.IS04().V1_2().QueryGetSources())
+						//fmt.Println("Senders:")
+						//fmt.Println(endpoint.IS04().V1_2().QueryGetSenders())
+						//fmt.Println("Receivers:")
+						//fmt.Println(endpoint.IS04().V1_2().QueryGetReceivers())
 					}
 				}
 			}

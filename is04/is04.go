@@ -10,6 +10,7 @@ import (
 	"github.com/BroadcastFacilityController/nmos-go-client/common"
 	is04v1_0 "github.com/BroadcastFacilityController/nmos-go-client/is04/v1.0"
 	is04v1_1 "github.com/BroadcastFacilityController/nmos-go-client/is04/v1.1"
+	is04v1_2 "github.com/BroadcastFacilityController/nmos-go-client/is04/v1.2"
 )
 
 type IS04 struct {
@@ -184,4 +185,8 @@ func (s *IS04) V1_0() *is04v1_0.IS04V1_0 {
 
 func (s *IS04) V1_1() *is04v1_1.IS04V1_1 {
 	return is04v1_1.NewIS04V1_1(s.href)
+}
+
+func (s *IS04) V1_2() *is04v1_2.IS04V1_2 {
+	return is04v1_2.NewIS04V1_2(s.href)
 }

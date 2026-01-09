@@ -383,7 +383,7 @@ func (v *IS04V1_2) NodePutReceiver(receiverID string, sender *Sender) error {
 // --------------------------------------------------
 
 func (v *IS04V1_2) QueryGetNodes() ([]Node, error) {
-	url := v.href + "/query/v1.1/nodes"
+	url := v.href + "/query/v1.2/nodes"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return []Node{}, err
@@ -396,18 +396,39 @@ func (v *IS04V1_2) QueryGetNodes() ([]Node, error) {
 	switch response.StatusCode {
 	case http.StatusOK:
 		// Default
-		respParsed, err := parseResponse[[]Node](response)
-		if err != nil {
-			return []Node{}, err
+		result := make([]Node, 0)
+		lastSince := "0:0"
+		for true {
+			respParsed, err := parseResponse[[]Node](response)
+			if err != nil {
+				return []Node{}, err
+			}
+			result = append(result, respParsed...)
+			// Check paging
+			limit := response.Header.Get("X-Paging-Until")
+			if limit == "" || limit == lastSince {
+				break
+			}
+			lastSince = limit
+			next := fmt.Sprintf("%s?paging.since=%s", url, limit)
+			reqNew, err := http.NewRequest(http.MethodGet, next, nil)
+			if err != nil {
+				return []Node{}, err
+			}
+			reqNew.Header.Add("Accept", "application/json")
+			response, err = http.DefaultClient.Do(reqNew)
+			if err != nil {
+				return []Node{}, err
+			}
 		}
-		return respParsed, nil
+		return result, nil
 	default:
 		return []Node{}, fmt.Errorf("bad response code. got %d", response.StatusCode)
 	}
 }
 
 func (v *IS04V1_2) QueryGetNode(nodeID string) (Node, error) {
-	url := v.href + "/query/v1.1/nodes/" + nodeID
+	url := v.href + "/query/v1.2/nodes/" + nodeID
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return Node{}, err
@@ -438,7 +459,7 @@ func (v *IS04V1_2) QueryGetNode(nodeID string) (Node, error) {
 }
 
 func (v *IS04V1_2) QueryGetSources() ([]Source, error) {
-	url := v.href + "/query/v1.1/sources"
+	url := v.href + "/query/v1.2/sources"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return []Source{}, err
@@ -451,18 +472,39 @@ func (v *IS04V1_2) QueryGetSources() ([]Source, error) {
 	switch response.StatusCode {
 	case http.StatusOK:
 		// Default
-		respParsed, err := parseResponse[[]Source](response)
-		if err != nil {
-			return []Source{}, err
+		result := make([]Source, 0)
+		lastSince := "0:0"
+		for true {
+			respParsed, err := parseResponse[[]Source](response)
+			if err != nil {
+				return []Source{}, err
+			}
+			result = append(result, respParsed...)
+			// Check paging
+			limit := response.Header.Get("X-Paging-Until")
+			if limit == "" || limit == lastSince {
+				break
+			}
+			lastSince = limit
+			next := fmt.Sprintf("%s?paging.since=%s", url, limit)
+			reqNew, err := http.NewRequest(http.MethodGet, next, nil)
+			if err != nil {
+				return []Source{}, err
+			}
+			reqNew.Header.Add("Accept", "application/json")
+			response, err = http.DefaultClient.Do(reqNew)
+			if err != nil {
+				return []Source{}, err
+			}
 		}
-		return respParsed, nil
+		return result, nil
 	default:
 		return []Source{}, fmt.Errorf("bad response code. got %d", response.StatusCode)
 	}
 }
 
 func (v *IS04V1_2) QueryGetSource(sourceID string) (Source, error) {
-	url := v.href + "/query/v1.1/sources/" + sourceID
+	url := v.href + "/query/v1.2/sources/" + sourceID
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return Source{}, err
@@ -493,7 +535,7 @@ func (v *IS04V1_2) QueryGetSource(sourceID string) (Source, error) {
 }
 
 func (v *IS04V1_2) QueryGetFlows() ([]Flow, error) {
-	url := v.href + "/query/v1.1/flows"
+	url := v.href + "/query/v1.2/flows"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return []Flow{}, err
@@ -506,18 +548,39 @@ func (v *IS04V1_2) QueryGetFlows() ([]Flow, error) {
 	switch response.StatusCode {
 	case http.StatusOK:
 		// Default
-		respParsed, err := parseResponse[[]Flow](response)
-		if err != nil {
-			return []Flow{}, err
+		result := make([]Flow, 0)
+		lastSince := "0:0"
+		for true {
+			respParsed, err := parseResponse[[]Flow](response)
+			if err != nil {
+				return []Flow{}, err
+			}
+			result = append(result, respParsed...)
+			// Check paging
+			limit := response.Header.Get("X-Paging-Until")
+			if limit == "" || limit == lastSince {
+				break
+			}
+			lastSince = limit
+			next := fmt.Sprintf("%s?paging.since=%s", url, limit)
+			reqNew, err := http.NewRequest(http.MethodGet, next, nil)
+			if err != nil {
+				return []Flow{}, err
+			}
+			reqNew.Header.Add("Accept", "application/json")
+			response, err = http.DefaultClient.Do(reqNew)
+			if err != nil {
+				return []Flow{}, err
+			}
 		}
-		return respParsed, nil
+		return result, nil
 	default:
 		return []Flow{}, fmt.Errorf("bad response code. got %d", response.StatusCode)
 	}
 }
 
 func (v *IS04V1_2) QueryGetFlow(flowID string) (Flow, error) {
-	url := v.href + "/query/v1.1/flows/" + flowID
+	url := v.href + "/query/v1.2/flows/" + flowID
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return Flow{}, err
@@ -548,7 +611,7 @@ func (v *IS04V1_2) QueryGetFlow(flowID string) (Flow, error) {
 }
 
 func (v *IS04V1_2) QueryGetDevices() ([]Device, error) {
-	url := v.href + "/query/v1.1/devices"
+	url := v.href + "/query/v1.2/devices"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return []Device{}, err
@@ -561,18 +624,39 @@ func (v *IS04V1_2) QueryGetDevices() ([]Device, error) {
 	switch response.StatusCode {
 	case http.StatusOK:
 		// Default
-		respParsed, err := parseResponse[[]Device](response)
-		if err != nil {
-			return []Device{}, err
+		result := make([]Device, 0)
+		lastSince := "0:0"
+		for true {
+			respParsed, err := parseResponse[[]Device](response)
+			if err != nil {
+				return []Device{}, err
+			}
+			result = append(result, respParsed...)
+			// Check paging
+			limit := response.Header.Get("X-Paging-Until")
+			if limit == "" || limit == lastSince {
+				break
+			}
+			lastSince = limit
+			next := fmt.Sprintf("%s?paging.since=%s", url, limit)
+			reqNew, err := http.NewRequest(http.MethodGet, next, nil)
+			if err != nil {
+				return []Device{}, err
+			}
+			reqNew.Header.Add("Accept", "application/json")
+			response, err = http.DefaultClient.Do(reqNew)
+			if err != nil {
+				return []Device{}, err
+			}
 		}
-		return respParsed, nil
+		return result, nil
 	default:
 		return []Device{}, fmt.Errorf("bad response code. got %d", response.StatusCode)
 	}
 }
 
 func (v *IS04V1_2) QueryGetDevice(deviceID string) (Device, error) {
-	url := v.href + "/query/v1.1/devices/" + deviceID
+	url := v.href + "/query/v1.2/devices/" + deviceID
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return Device{}, err
@@ -603,7 +687,7 @@ func (v *IS04V1_2) QueryGetDevice(deviceID string) (Device, error) {
 }
 
 func (v *IS04V1_2) QueryGetSenders() ([]Sender, error) {
-	url := v.href + "/query/v1.1/senders"
+	url := v.href + "/query/v1.2/senders"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return []Sender{}, err
@@ -616,18 +700,39 @@ func (v *IS04V1_2) QueryGetSenders() ([]Sender, error) {
 	switch response.StatusCode {
 	case http.StatusOK:
 		// Default
-		respParsed, err := parseResponse[[]Sender](response)
-		if err != nil {
-			return []Sender{}, err
+		result := make([]Sender, 0)
+		lastSince := "0:0"
+		for true {
+			respParsed, err := parseResponse[[]Sender](response)
+			if err != nil {
+				return []Sender{}, err
+			}
+			result = append(result, respParsed...)
+			// Check paging
+			limit := response.Header.Get("X-Paging-Until")
+			if limit == "" || limit == lastSince {
+				break
+			}
+			lastSince = limit
+			next := fmt.Sprintf("%s?paging.since=%s", url, limit)
+			reqNew, err := http.NewRequest(http.MethodGet, next, nil)
+			if err != nil {
+				return []Sender{}, err
+			}
+			reqNew.Header.Add("Accept", "application/json")
+			response, err = http.DefaultClient.Do(reqNew)
+			if err != nil {
+				return []Sender{}, err
+			}
 		}
-		return respParsed, nil
+		return result, nil
 	default:
 		return []Sender{}, fmt.Errorf("bad response code. got %d", response.StatusCode)
 	}
 }
 
 func (v *IS04V1_2) QueryGetSender(senderID string) (Sender, error) {
-	url := v.href + "/query/v1.1/senders/" + senderID
+	url := v.href + "/query/v1.2/senders/" + senderID
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return Sender{}, err
@@ -658,7 +763,7 @@ func (v *IS04V1_2) QueryGetSender(senderID string) (Sender, error) {
 }
 
 func (v *IS04V1_2) QueryGetReceivers() ([]Receiver, error) {
-	url := v.href + "/query/v1.1/receivers"
+	url := v.href + "/query/v1.2/receivers"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return []Receiver{}, err
@@ -671,18 +776,39 @@ func (v *IS04V1_2) QueryGetReceivers() ([]Receiver, error) {
 	switch response.StatusCode {
 	case http.StatusOK:
 		// Default
-		respParsed, err := parseResponse[[]Receiver](response)
-		if err != nil {
-			return []Receiver{}, err
+		result := make([]Receiver, 0)
+		lastSince := "0:0"
+		for true {
+			respParsed, err := parseResponse[[]Receiver](response)
+			if err != nil {
+				return []Receiver{}, err
+			}
+			result = append(result, respParsed...)
+			// Check paging
+			limit := response.Header.Get("X-Paging-Until")
+			if limit == "" || limit == lastSince {
+				break
+			}
+			lastSince = limit
+			next := fmt.Sprintf("%s?paging.since=%s", url, limit)
+			reqNew, err := http.NewRequest(http.MethodGet, next, nil)
+			if err != nil {
+				return []Receiver{}, err
+			}
+			reqNew.Header.Add("Accept", "application/json")
+			response, err = http.DefaultClient.Do(reqNew)
+			if err != nil {
+				return []Receiver{}, err
+			}
 		}
-		return respParsed, nil
+		return result, nil
 	default:
 		return []Receiver{}, fmt.Errorf("bad response code. got %d", response.StatusCode)
 	}
 }
 
 func (v *IS04V1_2) QueryGetReceiver(receiverID string) (Receiver, error) {
-	url := v.href + "/query/v1.1/receivers/" + receiverID
+	url := v.href + "/query/v1.2/receivers/" + receiverID
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return Receiver{}, err
@@ -713,7 +839,7 @@ func (v *IS04V1_2) QueryGetReceiver(receiverID string) (Receiver, error) {
 }
 
 func (v *IS04V1_2) QueryGetSubscriptions() ([]QueryAPISubscription, error) {
-	url := v.href + "/query/v1.1/subscriptions"
+	url := v.href + "/query/v1.2/subscriptions"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return []QueryAPISubscription{}, err
@@ -726,18 +852,39 @@ func (v *IS04V1_2) QueryGetSubscriptions() ([]QueryAPISubscription, error) {
 	switch response.StatusCode {
 	case http.StatusOK:
 		// Default
-		respParsed, err := parseResponse[[]QueryAPISubscription](response)
-		if err != nil {
-			return []QueryAPISubscription{}, err
+		result := make([]QueryAPISubscription, 0)
+		lastSince := "0:0"
+		for true {
+			respParsed, err := parseResponse[[]QueryAPISubscription](response)
+			if err != nil {
+				return []QueryAPISubscription{}, err
+			}
+			result = append(result, respParsed...)
+			// Check paging
+			limit := response.Header.Get("X-Paging-Until")
+			if limit == "" || limit == lastSince {
+				break
+			}
+			lastSince = limit
+			next := fmt.Sprintf("%s?paging.since=%s", url, limit)
+			reqNew, err := http.NewRequest(http.MethodGet, next, nil)
+			if err != nil {
+				return []QueryAPISubscription{}, err
+			}
+			reqNew.Header.Add("Accept", "application/json")
+			response, err = http.DefaultClient.Do(reqNew)
+			if err != nil {
+				return []QueryAPISubscription{}, err
+			}
 		}
-		return respParsed, nil
+		return result, nil
 	default:
 		return []QueryAPISubscription{}, fmt.Errorf("bad response code. got %d, wanted %d", response.StatusCode, http.StatusOK)
 	}
 }
 
 func (v *IS04V1_2) QueryGetSubscription(subscriptionID string) (QueryAPISubscription, error) {
-	url := v.href + "/query/v1.1/subscriptions/" + subscriptionID
+	url := v.href + "/query/v1.2/subscriptions/" + subscriptionID
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return QueryAPISubscription{}, err
@@ -769,7 +916,7 @@ func (v *IS04V1_2) QueryGetSubscription(subscriptionID string) (QueryAPISubscrip
 
 // Open a new websocket connection
 func (v *IS04V1_2) QueryPostSubscription(subscription QueryAPISubscriptionPost) (QueryAPISubscription, error) {
-	url := v.href + "/query/v1.1/subscriptions"
+	url := v.href + "/query/v1.2/subscriptions"
 	requestBody, err := json.Marshal(subscription)
 	if err != nil {
 		return QueryAPISubscription{}, err
@@ -811,7 +958,7 @@ func (v *IS04V1_2) QueryPostSubscription(subscription QueryAPISubscriptionPost) 
 }
 
 func (v *IS04V1_2) QueryDeleteSubscription(subscriptionID string) error {
-	url := v.href + "/query/v1.1/subscriptions/" + subscriptionID
+	url := v.href + "/query/v1.2/subscriptions/" + subscriptionID
 	request, err := http.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {
 		return err
