@@ -8,10 +8,16 @@ import (
 )
 
 func main() {
+	doAPIs := make(map[common.APIType]bool)
+	doAPIs[common.NODE] = false
+	doAPIs[common.QUERY] = false
+	doAPIs[common.REGISTRATION] = false
+	doAPIs[common.CONNECTION] = true
 
 	endpointHRefs := []string{
-		"http://10.10.60.10:8080/x-nmos",
-		//"http://10.10.71.11:80/x-nmos",
+		//"http://10.10.60.10:8080/x-nmos", // Cerebrum Registry
+		"http://10.10.71.11:80/x-nmos", // VB-440
+		"http://10.10.251.2:80/x-nmos", // Telestream SPG9000
 	}
 	endpoints := make([]nmos.NMOSEndpoint, len(endpointHRefs))
 	for i, href := range endpointHRefs {
@@ -32,6 +38,10 @@ func main() {
 		}
 		fmt.Println(apis)
 		for _, api := range apis {
+			doAPI, doAPI_ok := doAPIs[api]
+			if !doAPI_ok || !doAPI {
+				continue
+			}
 			fmt.Println("------------------------------")
 			fmt.Println("API: ", api)
 			switch api {
@@ -165,6 +175,43 @@ func main() {
 						//fmt.Println(endpoint.IS04().V1_2().QueryGetSenders())
 						//fmt.Println("Receivers:")
 						//fmt.Println(endpoint.IS04().V1_2().QueryGetReceivers())
+					}
+				}
+			case common.CONNECTION:
+				versions, err := endpoint.IS05().GetAPIVersions(common.CONNECTION)
+				if err != nil {
+					panic(err)
+				}
+				fmt.Println("Versions: ", versions)
+				for _, vers := range versions {
+					fmt.Println("----------")
+					fmt.Println("Version: ", vers)
+					if vers.Equals(common.NewAPIVersion(1, 0)) {
+						// IS-05 V1.0
+						fmt.Println("Senders:")
+						senders, err := endpoint.IS05().V1_0().ConnectionGetSenders()
+						fmt.Println(senders, err)
+						if len(senders) > 0 {
+							fmt.Println("Sender 0 Constraints:")
+							fmt.Println(endpoint.IS05().V1_0().ConnectionGetSenderConstraints(senders[0]))
+							fmt.Println("Sender 0 Active:")
+							fmt.Println(endpoint.IS05().V1_0().ConnectionGetSenderActive(senders[0]))
+							fmt.Println("Sender 0 Staged:")
+							fmt.Println(endpoint.IS05().V1_0().ConnectionGetSenderStaged(senders[0]))
+							fmt.Println("Sender 0 Transport File:")
+							fmt.Println(endpoint.IS05().V1_0().ConnectionGetSenderTransportFile(senders[0]))
+						}
+						fmt.Println("Receivers:")
+						receivers, err := endpoint.IS05().V1_0().ConnectionGetReceivers()
+						fmt.Println(receivers, err)
+						if len(receivers) > 0 {
+							fmt.Println("Receiver 0 Constraints:")
+							fmt.Println(endpoint.IS05().V1_0().ConnectionGetReceiverConstraints(receivers[0]))
+							fmt.Println("Receiver 0 Active:")
+							fmt.Println(endpoint.IS05().V1_0().ConnectionGetReceiverActive(receivers[0]))
+							fmt.Println("Receiver 0 Staged:")
+							fmt.Println(endpoint.IS05().V1_0().ConnectionGetReceiverStaged(receivers[0]))
+						}
 					}
 				}
 			}

@@ -9,6 +9,7 @@ import (
 
 	"github.com/BroadcastFacilityController/nmos-go-client/common"
 	"github.com/BroadcastFacilityController/nmos-go-client/is04"
+	"github.com/BroadcastFacilityController/nmos-go-client/is05"
 )
 
 type NMOSEndpoint struct {
@@ -59,4 +60,8 @@ func (n *NMOSEndpoint) GetSupportedAPIs() ([]common.APIType, error) {
 
 func (n *NMOSEndpoint) IS04() *is04.IS04 {
 	return is04.NewIS04(n.href)
+}
+
+func (n *NMOSEndpoint) IS05() *is05.IS05 {
+	return is05.NewIS05(n.href)
 }
