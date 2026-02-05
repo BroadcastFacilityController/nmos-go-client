@@ -213,6 +213,37 @@ func main() {
 							fmt.Println(endpoint.IS05().V1_0().ConnectionGetReceiverStaged(receivers[0]))
 						}
 					}
+					if vers.Equals(common.NewAPIVersion(1, 1)) {
+						// IS-05 V1.0
+						fmt.Println("Senders:")
+						senders, err := endpoint.IS05().V1_1().ConnectionGetSenders()
+						fmt.Println(senders, err)
+						if len(senders) > 0 {
+							fmt.Println("Sender 0 Constraints:")
+							fmt.Println(endpoint.IS05().V1_1().ConnectionGetSenderConstraints(senders[0]))
+							fmt.Println("Sender 0 Active:")
+							fmt.Println(endpoint.IS05().V1_1().ConnectionGetSenderActive(senders[0]))
+							fmt.Println("Sender 0 Staged:")
+							fmt.Println(endpoint.IS05().V1_1().ConnectionGetSenderStaged(senders[0]))
+							fmt.Println("Sender 0 Transport File:")
+							fmt.Println(endpoint.IS05().V1_1().ConnectionGetSenderTransportFile(senders[0]))
+							fmt.Println("Sender 0 Transport Type:")
+							fmt.Println(endpoint.IS05().V1_1().ConnectionGetSenderTransportType(senders[0]))
+						}
+						fmt.Println("Receivers:")
+						receivers, err := endpoint.IS05().V1_1().ConnectionGetReceivers()
+						fmt.Println(receivers, err)
+						if len(receivers) > 0 {
+							fmt.Println("Receiver 0 Constraints:")
+							fmt.Println(endpoint.IS05().V1_1().ConnectionGetReceiverConstraints(receivers[0]))
+							fmt.Println("Receiver 0 Active:")
+							fmt.Println(endpoint.IS05().V1_1().ConnectionGetReceiverActive(receivers[0]))
+							fmt.Println("Receiver 0 Staged:")
+							fmt.Println(endpoint.IS05().V1_1().ConnectionGetReceiverStaged(receivers[0]))
+							fmt.Println("Receiver 0 Transport Type:")
+							fmt.Println(endpoint.IS05().V1_1().ConnectionGetReceiverTransportType(receivers[0]))
+						}
+					}
 				}
 			}
 		}
