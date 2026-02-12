@@ -2,6 +2,7 @@ package is08v1_0
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/guregu/null/v6"
 )
@@ -17,12 +18,16 @@ func (r *OutputCapsResponse) UnmarshalJSON(data []byte) error {
 	if err != nil {
 		return err
 	}
-	inputs, inputs_ok := dataTest["routable_inputs"].([]null.String)
+	inputs, inputs_ok := dataTest["routable_inputs"].([]any)
 	if !inputs_ok {
+		fmt.Println(inputs)
 		r.RoutableInputs = make([]null.String, 0)
 		return nil
 	}
-	r.RoutableInputs = inputs
+	r.RoutableInputs = make([]null.String, len(inputs))
+	for i := range inputs {
+		r.RoutableInputs[i] = null.NewString(fmt.Sprint(inputs[i]), inputs[i] != nil)
+	}
 	return nil
 }
 

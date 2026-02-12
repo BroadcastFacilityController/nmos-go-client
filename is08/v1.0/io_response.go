@@ -9,15 +9,15 @@ type IOResponse struct {
 }
 
 type IOResponseInput struct {
-	Properties InputProperties       `json:"properties"`
-	Parent     InputParentResponse   `json:"parent"`
-	Channels   InputChannelsResponse `json:"channels"`
-	Caps       InputCapsResponse     `json:"caps"`
+	Properties InputProperties         `json:"properties"`
+	Parent     InputParentResponse     `json:"parent"`
+	Channels   []InputChannelsResponse `json:"channels"`
+	Caps       InputCapsResponse       `json:"caps"`
 }
 
 type IOResponseOutput struct {
-	Properties OutputProperties       `json:"properties"`
-	SourceID   null.String            `json:"source_id"`
-	Channels   OutputChannelsResponse `json:"channels"`
-	Caps       OutputCapsResponse     `json:"caps"`
+	Properties OutputProperties         `json:"properties"`
+	SourceID   null.String              `json:"source_id"`
+	Channels   []OutputChannelsResponse `json:"channels"`
+	Caps       OutputCapsResponse       `json:"caps"`
 }
