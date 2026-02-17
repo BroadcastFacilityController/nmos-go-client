@@ -36,7 +36,7 @@ func (t *Type) UnmarshalJSON(data []byte) error {
 	if !typeTest_ok {
 		return fmt.Errorf("unable to parse data %v", data)
 	}
-	_, valuesTest_ok := dataTest["values"].([]byte)
+	_, valuesTest_ok := dataTest["values"].([]any)
 	switch typeTest {
 	case "boolean":
 		if valuesTest_ok {
@@ -100,7 +100,7 @@ func (t *Type) UnmarshalJSON(data []byte) error {
 			if err != nil {
 				return err
 			}
-			t.TypeStringEnum = &parsed
+			t.TypeString = &parsed
 			t.Type = TYPE_TYPE_STRING
 			return nil
 		}
@@ -112,17 +112,17 @@ func (t *Type) UnmarshalJSON(data []byte) error {
 func (t *Type) MarshalJSON() ([]byte, error) {
 	switch t.Type {
 	case TYPE_TYPE_BOOLEAN:
-		return json.Marshal(t.Boolean)
+		return json.Marshal(*(t.Boolean))
 	case TYPE_TYPE_BOOLEAN_ENUM:
-		return json.Marshal(t.BooleanEnum)
+		return json.Marshal(*(t.BooleanEnum))
 	case TYPE_TYPE_NUMBER:
-		return json.Marshal(t.Number)
+		return json.Marshal(*(t.Number))
 	case TYPE_TYPE_NUMBER_ENUM:
-		return json.Marshal(t.NumberEnum)
+		return json.Marshal(*(t.NumberEnum))
 	case TYPE_TYPE_STRING:
-		return json.Marshal(t.TypeString)
+		return json.Marshal(*(t.TypeString))
 	case TYPE_TYPE_STRING_ENUM:
-		return json.Marshal(t.TypeStringEnum)
+		return json.Marshal(*(t.TypeStringEnum))
 	default:
 		return nil, fmt.Errorf("unable to parse type %s", t.Type)
 	}

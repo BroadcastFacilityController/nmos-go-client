@@ -24,9 +24,9 @@ func (c *Command) UnmarshalJSON(data []byte) error {
 	if err != nil {
 		return err
 	}
-	cmd := dataTest["command"].(CommandType)
+	cmd := dataTest["command"].(string)
 	switch cmd {
-	case COMMAND_TYPE_HEALTH:
+	case string(COMMAND_TYPE_HEALTH):
 		var parsed CommandHealth
 		err = json.Unmarshal(data, &parsed)
 		if err != nil {
@@ -35,7 +35,7 @@ func (c *Command) UnmarshalJSON(data []byte) error {
 		c.Health = &parsed
 		c.Type = COMMAND_TYPE_HEALTH
 		return nil
-	case COMMAND_TYPE_SUBSCRIPTION:
+	case string(COMMAND_TYPE_SUBSCRIPTION):
 		var parsed CommandSubscription
 		err = json.Unmarshal(data, &parsed)
 		if err != nil {
@@ -52,9 +52,9 @@ func (c *Command) UnmarshalJSON(data []byte) error {
 func (c *Command) MarshalJSON() ([]byte, error) {
 	switch c.Type {
 	case COMMAND_TYPE_HEALTH:
-		return json.Marshal(c.Health)
+		return json.Marshal(*(c.Health))
 	case COMMAND_TYPE_SUBSCRIPTION:
-		return json.Marshal(c.Subscription)
+		return json.Marshal(*(c.Subscription))
 	default:
 		return nil, fmt.Errorf("unable to parse type %s", c.Type)
 	}

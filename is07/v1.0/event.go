@@ -95,13 +95,13 @@ func (e *Event) UnmarshalJSON(data []byte) error {
 func (e *Event) MarshalJSON() ([]byte, error) {
 	switch e.Type {
 	case EVENT_TYPE_BOOLEAN:
-		return json.Marshal(e.Boolean)
+		return json.Marshal(*(e.Boolean))
 	case EVENT_TYPE_NUMBER:
-		return json.Marshal(e.Number)
+		return json.Marshal(*(e.Number))
 	case EVENT_TYPE_STRING:
-		return json.Marshal(e.StringEvent)
+		return json.Marshal(*(e.StringEvent))
 	case EVENT_TYPE_OBJECT:
-		return json.Marshal(e.Object)
+		return json.Marshal(*(e.Object))
 	default:
 		return nil, fmt.Errorf("unable to parse type %s", e.Type)
 	}
