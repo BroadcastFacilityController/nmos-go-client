@@ -3,8 +3,6 @@ package is05v1_1
 import (
 	"encoding/json"
 	"fmt"
-
-	"github.com/guregu/null/v6"
 )
 
 type ReceiverTransportParamType string
@@ -32,7 +30,7 @@ func (p *ReceiverTransportParam) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	// Check if RTP param
-	_, rtpEnabled_ok := dataTest["rtp_enabled"].(bool)
+	_, rtpEnabled_ok := dataTest["rtp_enabled"]
 	if rtpEnabled_ok {
 		var paramTemp ReceiverTransportParamRTP
 		err = json.Unmarshal(data, &paramTemp)
@@ -44,7 +42,7 @@ func (p *ReceiverTransportParam) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 	// Check if Websocket param
-	_, connectionURI_ok := dataTest["connection_uri"].(string)
+	_, connectionURI_ok := dataTest["connection_uri"]
 	if connectionURI_ok {
 		var paramTemp ReceiverTransportParamWebsocket
 		err = json.Unmarshal(data, &paramTemp)
@@ -56,7 +54,7 @@ func (p *ReceiverTransportParam) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 	// Check if MQTT param
-	_, brokerTopic_ok := dataTest["broker_topic"].(null.String)
+	_, brokerTopic_ok := dataTest["broker_topic"]
 	if brokerTopic_ok {
 		var paramTemp ReceiverTransportParamMQTT
 		err = json.Unmarshal(data, &paramTemp)

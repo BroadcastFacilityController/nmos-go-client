@@ -9,6 +9,7 @@ import (
 // Used primarily in IS-05 transport params
 type AutoInt struct {
 	IsAuto bool // Is the value set to "auto"
+	IsNull bool // Is the value null?
 	Int    int  // Int value, assuming value is not "auto"
 }
 
@@ -21,6 +22,9 @@ func (a *AutoInt) ValueOrZero() int {
 }
 
 func (a *AutoInt) MarshalJSON() ([]byte, error) {
+	if a.IsNull {
+		return json.Marshal(nil)
+	}
 	if a.IsAuto {
 		return json.Marshal("auto")
 	}
@@ -30,11 +34,12 @@ func (a *AutoInt) MarshalJSON() ([]byte, error) {
 func (a *AutoInt) UnmarshalJSON(data []byte) error {
 	// Ignore null values
 	if len(data) == 0 || string(data) == "null" {
+		a.IsNull = true
 		return nil
 	}
 
 	// Check if auto
-	if string(data) == "auto" {
+	if string(data) == "\"auto\"" {
 		a.IsAuto = true
 		return nil
 	}
@@ -47,6 +52,9 @@ func (a *AutoInt) UnmarshalJSON(data []byte) error {
 }
 
 func (a *AutoInt) MarshalText() ([]byte, error) {
+	if a.IsNull {
+		return nil, nil
+	}
 	if a.IsAuto {
 		return []byte("auto"), nil
 	}

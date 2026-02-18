@@ -3,8 +3,6 @@ package is05v1_1
 import (
 	"encoding/json"
 	"fmt"
-
-	"github.com/guregu/null/v6"
 )
 
 type SenderTransportParamType string
@@ -44,7 +42,7 @@ func (p *SenderTransportParam) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 	// Check if Websocket param
-	_, connectionURI_ok := dataTest["connection_uri"].(string)
+	_, connectionURI_ok := dataTest["connection_uri"]
 	if connectionURI_ok {
 		var param SenderTransportParamWebsocket
 		err = json.Unmarshal(data, &param)
@@ -56,7 +54,7 @@ func (p *SenderTransportParam) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 	// Check if MQTT param
-	_, brokerTopic_ok := dataTest["broker_topic"].(null.String)
+	_, brokerTopic_ok := dataTest["broker_topic"]
 	if brokerTopic_ok {
 		var param SenderTransportParamMQTT
 		err = json.Unmarshal(data, &param)

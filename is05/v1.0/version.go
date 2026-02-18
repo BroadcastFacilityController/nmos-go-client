@@ -149,121 +149,121 @@ func (v *IS05V1_0) ConnectionGetSenderConstraints(senderID string) ([]Constraint
 	}
 }
 
-func (v *IS05V1_0) ConnectionGetSenderStaged(senderID string) (Sender, Error, error) {
+func (v *IS05V1_0) ConnectionGetSenderStaged(senderID string) (SenderResponse, Error, error) {
 	url := v.href + "/connection/v1.0/single/senders/" + senderID + "/staged"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		return Sender{}, Error{}, err
+		return SenderResponse{}, Error{}, err
 	}
 	request.Header.Add("Accept", "application/json")
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
-		return Sender{}, Error{}, err
+		return SenderResponse{}, Error{}, err
 	}
 	switch response.StatusCode {
 	case http.StatusOK:
-		var respParsed Sender
+		var respParsed SenderResponse
 		err = json.NewDecoder(response.Body).Decode(&respParsed)
 		if err != nil {
-			return Sender{}, Error{}, err
+			return SenderResponse{}, Error{}, err
 		}
 		return respParsed, Error{}, nil
 	case http.StatusNotFound:
 		var respParsed Error
 		err = json.NewDecoder(response.Body).Decode(&respParsed)
 		if err != nil {
-			return Sender{}, Error{}, err
+			return SenderResponse{}, Error{}, err
 		}
-		return Sender{}, respParsed, nil
+		return SenderResponse{}, respParsed, nil
 	default:
-		return Sender{}, Error{}, fmt.Errorf("unable to parse response code %d", response.StatusCode)
+		return SenderResponse{}, Error{}, fmt.Errorf("unable to parse response code %d", response.StatusCode)
 	}
 }
 
-func (v *IS05V1_0) ConnectionPatchSenderStaged(senderID string, senderStaged Sender) (Sender, Error, error) {
+func (v *IS05V1_0) ConnectionPatchSenderStaged(senderID string, senderStaged SenderStage) (SenderResponse, Error, error) {
 	requestBody, err := json.Marshal(senderStaged)
 	if err != nil {
-		return Sender{}, Error{}, err
+		return SenderResponse{}, Error{}, err
 	}
 	url := v.href + "/connection/v1.0/single/senders/" + senderID + "/staged"
 	request, err := http.NewRequest(http.MethodPatch, url, bytes.NewReader(requestBody))
 	if err != nil {
-		return Sender{}, Error{}, err
+		return SenderResponse{}, Error{}, err
 	}
 	request.Header.Add("Accept", "application/json")
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
-		return Sender{}, Error{}, err
+		return SenderResponse{}, Error{}, err
 	}
 	switch response.StatusCode {
 	case http.StatusOK, http.StatusAccepted:
-		var respParsed Sender
+		var respParsed SenderResponse
 		err = json.NewDecoder(response.Body).Decode(&respParsed)
 		if err != nil {
-			return Sender{}, Error{}, err
+			return SenderResponse{}, Error{}, err
 		}
 		return respParsed, Error{}, nil
 	case http.StatusBadRequest:
 		var respParsed Error
 		err = json.NewDecoder(response.Body).Decode(&respParsed)
 		if err != nil {
-			return Sender{}, Error{}, err
+			return SenderResponse{}, Error{}, err
 		}
-		return Sender{}, respParsed, nil
+		return SenderResponse{}, respParsed, nil
 	case http.StatusNotFound:
 		var respParsed Error
 		err = json.NewDecoder(response.Body).Decode(&respParsed)
 		if err != nil {
-			return Sender{}, Error{}, err
+			return SenderResponse{}, Error{}, err
 		}
-		return Sender{}, respParsed, nil
+		return SenderResponse{}, respParsed, nil
 	case http.StatusLocked:
 		var respParsed Error
 		err = json.NewDecoder(response.Body).Decode(&respParsed)
 		if err != nil {
-			return Sender{}, Error{}, err
+			return SenderResponse{}, Error{}, err
 		}
-		return Sender{}, respParsed, nil
+		return SenderResponse{}, respParsed, nil
 	case http.StatusInternalServerError:
 		var respParsed Error
 		err = json.NewDecoder(response.Body).Decode(&respParsed)
 		if err != nil {
-			return Sender{}, Error{}, err
+			return SenderResponse{}, Error{}, err
 		}
-		return Sender{}, respParsed, nil
+		return SenderResponse{}, respParsed, nil
 	default:
-		return Sender{}, Error{}, fmt.Errorf("unable to parse response code %d", response.StatusCode)
+		return SenderResponse{}, Error{}, fmt.Errorf("unable to parse response code %d", response.StatusCode)
 	}
 }
 
-func (v *IS05V1_0) ConnectionGetSenderActive(senderID string) (Sender, Error, error) {
+func (v *IS05V1_0) ConnectionGetSenderActive(senderID string) (SenderResponse, Error, error) {
 	url := v.href + "/connection/v1.0/single/senders/" + senderID + "/active"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		return Sender{}, Error{}, err
+		return SenderResponse{}, Error{}, err
 	}
 	request.Header.Add("Accept", "application/json")
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
-		return Sender{}, Error{}, err
+		return SenderResponse{}, Error{}, err
 	}
 	switch response.StatusCode {
 	case http.StatusOK:
-		var respParsed Sender
+		var respParsed SenderResponse
 		err = json.NewDecoder(response.Body).Decode(&respParsed)
 		if err != nil {
-			return Sender{}, Error{}, err
+			return SenderResponse{}, Error{}, err
 		}
 		return respParsed, Error{}, nil
 	case http.StatusNotFound:
 		var respParsed Error
 		err = json.NewDecoder(response.Body).Decode(&respParsed)
 		if err != nil {
-			return Sender{}, Error{}, err
+			return SenderResponse{}, Error{}, err
 		}
-		return Sender{}, respParsed, nil
+		return SenderResponse{}, respParsed, nil
 	default:
-		return Sender{}, Error{}, fmt.Errorf("unable to parse response code %d", response.StatusCode)
+		return SenderResponse{}, Error{}, fmt.Errorf("unable to parse response code %d", response.StatusCode)
 	}
 }
 
@@ -352,120 +352,120 @@ func (v *IS05V1_0) ConnectionGetReceiverConstraints(receiverID string) ([]Constr
 	}
 }
 
-func (v *IS05V1_0) ConnectionGetReceiverStaged(receiverID string) (Receiver, Error, error) {
+func (v *IS05V1_0) ConnectionGetReceiverStaged(receiverID string) (ReceiverResponse, Error, error) {
 	url := v.href + "/connection/v1.0/single/receivers/" + receiverID + "/staged"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		return Receiver{}, Error{}, err
+		return ReceiverResponse{}, Error{}, err
 	}
 	request.Header.Add("Accept", "application/json")
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
-		return Receiver{}, Error{}, err
+		return ReceiverResponse{}, Error{}, err
 	}
 	switch response.StatusCode {
 	case http.StatusOK:
-		var respParsed Receiver
+		var respParsed ReceiverResponse
 		err = json.NewDecoder(response.Body).Decode(&respParsed)
 		if err != nil {
-			return Receiver{}, Error{}, err
+			return ReceiverResponse{}, Error{}, err
 		}
 		return respParsed, Error{}, nil
 	case http.StatusNotFound:
 		var respParsed Error
 		err = json.NewDecoder(response.Body).Decode(&respParsed)
 		if err != nil {
-			return Receiver{}, Error{}, err
+			return ReceiverResponse{}, Error{}, err
 		}
-		return Receiver{}, respParsed, nil
+		return ReceiverResponse{}, respParsed, nil
 	default:
-		return Receiver{}, Error{}, fmt.Errorf("unable to parse response code %d", response.StatusCode)
+		return ReceiverResponse{}, Error{}, fmt.Errorf("unable to parse response code %d", response.StatusCode)
 	}
 }
 
-func (v *IS05V1_0) ConnectionPatchReceiverStaged(receiverID string, receiverStaged Receiver) (Receiver, Error, error) {
+func (v *IS05V1_0) ConnectionPatchReceiverStaged(receiverID string, receiverStaged ReceiverStage) (ReceiverResponse, Error, error) {
 	requestBody, err := json.Marshal(receiverStaged)
 	if err != nil {
-		return Receiver{}, Error{}, err
+		return ReceiverResponse{}, Error{}, err
 	}
 	url := v.href + "/connection/v1.0/single/receivers/" + receiverID + "/staged"
 	request, err := http.NewRequest(http.MethodPatch, url, bytes.NewReader(requestBody))
 	if err != nil {
-		return Receiver{}, Error{}, err
+		return ReceiverResponse{}, Error{}, err
 	}
 	request.Header.Add("Accept", "application/json")
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
-		return Receiver{}, Error{}, err
+		return ReceiverResponse{}, Error{}, err
 	}
 	switch response.StatusCode {
 	case http.StatusOK, http.StatusAccepted:
-		var respParsed Receiver
+		var respParsed ReceiverResponse
 		err = json.NewDecoder(response.Body).Decode(&respParsed)
 		if err != nil {
-			return Receiver{}, Error{}, err
+			return ReceiverResponse{}, Error{}, err
 		}
 		return respParsed, Error{}, nil
 	case http.StatusBadRequest:
 		var respParsed Error
 		err = json.NewDecoder(response.Body).Decode(&respParsed)
 		if err != nil {
-			return Receiver{}, Error{}, err
+			return ReceiverResponse{}, Error{}, err
 		}
-		return Receiver{}, respParsed, nil
+		return ReceiverResponse{}, respParsed, nil
 	case http.StatusNotFound:
 		var respParsed Error
 		err = json.NewDecoder(response.Body).Decode(&respParsed)
 		if err != nil {
-			return Receiver{}, Error{}, err
+			return ReceiverResponse{}, Error{}, err
 		}
-		return Receiver{}, respParsed, nil
+		return ReceiverResponse{}, respParsed, nil
 	case http.StatusLocked:
 		var respParsed Error
 		err = json.NewDecoder(response.Body).Decode(&respParsed)
 		if err != nil {
-			return Receiver{}, Error{}, err
+			return ReceiverResponse{}, Error{}, err
 		}
-		return Receiver{}, respParsed, nil
+		return ReceiverResponse{}, respParsed, nil
 	case http.StatusInternalServerError:
 		var respParsed Error
 		err = json.NewDecoder(response.Body).Decode(&respParsed)
 		if err != nil {
-			return Receiver{}, Error{}, err
+			return ReceiverResponse{}, Error{}, err
 		}
-		return Receiver{}, respParsed, nil
+		return ReceiverResponse{}, respParsed, nil
 	default:
-		return Receiver{}, Error{}, fmt.Errorf("unable to parse response code %d", response.StatusCode)
+		return ReceiverResponse{}, Error{}, fmt.Errorf("unable to parse response code %d", response.StatusCode)
 	}
 }
 
-func (v *IS05V1_0) ConnectionGetReceiverActive(receiverID string) (Receiver, Error, error) {
+func (v *IS05V1_0) ConnectionGetReceiverActive(receiverID string) (ReceiverResponse, Error, error) {
 	url := v.href + "/connection/v1.0/single/receivers/" + receiverID + "/active"
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		return Receiver{}, Error{}, err
+		return ReceiverResponse{}, Error{}, err
 	}
 	request.Header.Add("Accept", "application/json")
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
-		return Receiver{}, Error{}, err
+		return ReceiverResponse{}, Error{}, err
 	}
 	switch response.StatusCode {
 	case http.StatusOK:
-		var respParsed Receiver
+		var respParsed ReceiverResponse
 		err = json.NewDecoder(response.Body).Decode(&respParsed)
 		if err != nil {
-			return Receiver{}, Error{}, err
+			return ReceiverResponse{}, Error{}, err
 		}
 		return respParsed, Error{}, nil
 	case http.StatusNotFound:
 		var respParsed Error
 		err = json.NewDecoder(response.Body).Decode(&respParsed)
 		if err != nil {
-			return Receiver{}, Error{}, err
+			return ReceiverResponse{}, Error{}, err
 		}
-		return Receiver{}, respParsed, nil
+		return ReceiverResponse{}, respParsed, nil
 	default:
-		return Receiver{}, Error{}, fmt.Errorf("unable to parse response code %d", response.StatusCode)
+		return ReceiverResponse{}, Error{}, fmt.Errorf("unable to parse response code %d", response.StatusCode)
 	}
 }

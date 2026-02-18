@@ -28,7 +28,7 @@ func (c *Constraints) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	// Check RTP
-	_, rtpEnabled_ok := dataTest["rtp_enabled"].(Constraint)
+	_, rtpEnabled_ok := dataTest["rtp_enabled"]
 	if rtpEnabled_ok {
 		var dataTemp ConstraintsRTP
 		err := json.Unmarshal(data, &dataTemp)
@@ -40,7 +40,7 @@ func (c *Constraints) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 	// Check Websocket
-	_, connectionURI_ok := dataTest["connection_uri"].(Constraint)
+	_, connectionURI_ok := dataTest["connection_uri"]
 	if connectionURI_ok {
 		var dataTemp ConstraintsWebsocket
 		err := json.Unmarshal(data, &dataTemp)
@@ -52,7 +52,7 @@ func (c *Constraints) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 	// Check MQTT
-	_, brokerTopic_ok := dataTest["broker_topic"].(Constraint)
+	_, brokerTopic_ok := dataTest["broker_topic"]
 	if brokerTopic_ok {
 		var dataTemp ConstraintsMQTT
 		err := json.Unmarshal(data, &dataTemp)

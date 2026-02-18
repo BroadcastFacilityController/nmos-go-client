@@ -2,7 +2,7 @@ package is05v1_1
 
 import (
 	"encoding/json"
-	"reflect"
+	"maps"
 )
 
 type ConstraintTypeMQTT string
@@ -29,11 +29,6 @@ func (c *ConstraintsMQTT) UnmarshalJSON(data []byte) error {
 	if *c == nil {
 		*c = make(ConstraintsMQTT)
 	}
-	for key, val := range dataTemp {
-		if reflect.ValueOf(val).IsZero() {
-			continue
-		}
-		(*c)[key] = val
-	}
+	maps.Copy((*c), dataTemp)
 	return nil
 }

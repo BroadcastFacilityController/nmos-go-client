@@ -20,7 +20,7 @@ type ReceiverTransportParam struct {
 
 func (p *ReceiverTransportParam) UnmarshalJSON(data []byte) error {
 	// Unmarshall to generic interface
-	var dataTest map[string]interface{}
+	var dataTest map[string]any
 	err := json.Unmarshal(data, &dataTest)
 	if err != nil {
 		return err

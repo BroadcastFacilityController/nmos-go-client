@@ -2,7 +2,7 @@ package is05v1_0
 
 import (
 	"encoding/json"
-	"reflect"
+	"maps"
 )
 
 // The constraints for a single transport parameter
@@ -48,11 +48,6 @@ func (c *Constraints) UnmarshalJSON(data []byte) error {
 	if *c == nil {
 		*c = make(Constraints)
 	}
-	for key, val := range dataTemp {
-		if reflect.ValueOf(val).IsZero() {
-			continue
-		}
-		(*c)[key] = val
-	}
+	maps.Copy((*c), dataTemp)
 	return nil
 }

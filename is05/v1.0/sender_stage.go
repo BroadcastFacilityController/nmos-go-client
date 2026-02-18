@@ -4,7 +4,7 @@ import (
 	"github.com/guregu/null/v6"
 )
 
-type Sender struct {
+type SenderStage struct {
 	ReceiverID      null.String            `json:"receiver_id"`   // ID of the target Receiver of this Sender. This will be null if the sender is operating in multicast mode, or has not been assigned a receiver in unicast mode, or is sending to a non-NMOS receiver in unicast mode.
 	MasterEnable    bool                   `json:"master_enable"` // Master on/off control for sender
 	Activation      Activation             `json:"activation"`

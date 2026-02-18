@@ -2,7 +2,7 @@ package is05v1_1
 
 import (
 	"encoding/json"
-	"reflect"
+	"maps"
 )
 
 type ConstraintTypeRTP string
@@ -42,11 +42,6 @@ func (c *ConstraintsRTP) UnmarshalJSON(data []byte) error {
 	if *c == nil {
 		*c = make(ConstraintsRTP)
 	}
-	for key, val := range dataTemp {
-		if reflect.ValueOf(val).IsZero() {
-			continue
-		}
-		(*c)[key] = val
-	}
+	maps.Copy((*c), dataTemp)
 	return nil
 }
