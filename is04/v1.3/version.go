@@ -996,33 +996,33 @@ func (v *IS04V1_3) QueryDeleteSubscription(subscriptionID string) error {
 // --------------------------------------------------
 
 // Show a Node's health (for debug use only)
-func (v *IS04V1_3) RegistrationGetNodeHealth(nodeID string) (RegistrationHealth, error) {
+func (v *IS04V1_3) RegistrationGetNodeHealth(nodeID string) (RegistrationHealthResponse, error) {
 	url := v.href + "/registration/v1.1/health/nodes/" + nodeID
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		return RegistrationHealth{}, err
+		return RegistrationHealthResponse{}, err
 	}
 	request.Header.Add("Accept", "application/json")
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
-		return RegistrationHealth{}, err
+		return RegistrationHealthResponse{}, err
 	}
 	switch response.StatusCode {
 	case http.StatusOK:
 		// Default
-		respParsed, err := parseResponse[RegistrationHealth](response)
+		respParsed, err := parseResponse[RegistrationHealthResponse](response)
 		if err != nil {
-			return RegistrationHealth{}, err
+			return RegistrationHealthResponse{}, err
 		}
 		return respParsed, nil
 	case http.StatusNotFound:
 		// Returned when the POST request is incorrectly formatted or missing mandatory attributes
 		respParsed, err := parseResponse[Error](response)
 		if err != nil {
-			return RegistrationHealth{}, err
+			return RegistrationHealthResponse{}, err
 		}
-		return RegistrationHealth{}, respParsed.GetError()
+		return RegistrationHealthResponse{}, respParsed.GetError()
 	default:
-		return RegistrationHealth{}, fmt.Errorf("bad response code. got %d", response.StatusCode)
+		return RegistrationHealthResponse{}, fmt.Errorf("bad response code. got %d", response.StatusCode)
 	}
 }
