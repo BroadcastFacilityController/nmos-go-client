@@ -1,5 +1,7 @@
 package is04v1_3
 
+import "encoding/json"
+
 // Describes a Device
 type Device struct {
 	ResourceCore
@@ -18,7 +20,52 @@ const (
 )
 
 type DeviceControl struct {
-	HRef          string `json:"href"`          // URL to reach a control endpoint, whether http or otherwise
-	Type          string `json:"type"`          // URN identifying the control format
-	Authorization bool   `json:"authorization"` // This endpoint requires authorization, optional
+	HRef             string `json:"href,omitempty"`          // URL to reach a control endpoint, whether http or otherwise
+	Type             string `json:"type"`                    // URN identifying the control format
+	Authorization    bool   `json:"authorization,omitempty"` // This endpoint requires authorization, optional
+	UseAuthorization bool   `json:"-"`                       // Whether or not to force the "authorization" key in JSON responses
+}
+
+func (d *DeviceControl) UnmarshalJSON(data []byte) error {
+	var dataTest map[string]any
+	err := json.Unmarshal(data, &dataTest)
+	if err != nil {
+		return err
+	}
+	type alias DeviceControl
+	var dataTemp alias
+	err = json.Unmarshal(data, &dataTemp)
+	if err != nil {
+		return err
+	}
+	d.HRef = dataTemp.HRef
+	d.Type = dataTemp.Type
+	d.Authorization = dataTemp.Authorization
+	_, auth_ok := dataTest["authorization"]
+	if auth_ok {
+		d.UseAuthorization = true
+	}
+	return nil
+}
+
+func (d *DeviceControl) MarshalJSON() ([]byte, error) {
+	if d.UseAuthorization {
+		return json.Marshal(struct {
+			HRef          string `json:"href,omitempty"`
+			Type          string `json:"type"`
+			Authorization bool   `json:"authorization"`
+		}{
+			HRef:          d.HRef,
+			Type:          d.Type,
+			Authorization: d.Authorization,
+		})
+	} else {
+		return json.Marshal(struct {
+			HRef string `json:"href,omitempty"`
+			Type string `json:"type"`
+		}{
+			HRef: d.HRef,
+			Type: d.Type,
+		})
+	}
 }

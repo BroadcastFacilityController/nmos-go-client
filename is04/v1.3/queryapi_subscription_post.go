@@ -6,7 +6,7 @@ type QueryAPISubscriptionPost struct {
 	Persist         bool                             `json:"persist"`                 // Whether the API will retain or destroy the subscription after the final client disconnects
 	Secure          bool                             `json:"secure"`                  // Whether a secure WebSocket connection (wss://) is required. NB: Default should be 'true' if the API is being presented via HTTPS, and 'false' otherwise.
 	ResourcePath    QueryAPISubscriptionResourcePath `json:"resource_path"`           // HTTP resource path in the Query API to which this subscription relates
-	Params          any                              `json:"params"`                  // Object containing attributes to filter the resource on as per the Query Parameters specification. Can be empty.
+	Params          map[string]string                `json:"params"`                  // Object containing attributes to filter the resource on as per the Query Parameters specification. Can be empty.
 	Authorization   bool                             `json:"authorization,omitempty"` // Whether the WebSocket connection requires authorization. NB: Default should be 'true' if the API requires authorization, and 'false' otherwise.
 }
 
