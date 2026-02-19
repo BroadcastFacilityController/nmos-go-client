@@ -63,11 +63,17 @@ func (v *APIVersion) UnmarshalJSON(data []byte) error {
 	if err != nil {
 		return err
 	}
-	v, err = NewAPIVersionFromString(resultStr)
+	temp, err := NewAPIVersionFromString(resultStr)
 	if err != nil {
 		return err
 	}
+	v.major = temp.major
+	v.minor = temp.minor
 	return nil
+}
+
+func (v *APIVersion) MarshalJSON() ([]byte, error) {
+	return json.Marshal(v.String())
 }
 
 func (v APIVersion) String() string {
