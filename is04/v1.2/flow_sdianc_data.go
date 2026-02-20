@@ -3,9 +3,9 @@ package is04v1_2
 // Describes an SDI ancillary Flow
 type FlowSDIANCData struct {
 	FlowCore
-	Format    FormatURI            `json:"format"`     // Format of the data coming from the Flow as a URN
-	MediaType string               `json:"media_type"` // Subclassification of the format using IANA assigned media types
-	DID_SDID  []FlowSDIANCDID_SDID `json:"DID_SDID"`   // List of Data identification and Secondary data identification words
+	Format    FormatURI            `json:"format"`             // Format of the data coming from the Flow as a URN
+	MediaType string               `json:"media_type"`         // Subclassification of the format using IANA assigned media types
+	DID_SDID  []FlowSDIANCDID_SDID `json:"DID_SDID,omitempty"` // List of Data identification and Secondary data identification words
 }
 
 // Entry for data identification and Secondary data identification words

@@ -52,19 +52,23 @@ func (f *Flow) UnmarshalJSON(data []byte) error {
 		switch mediaType {
 		case IANA_MEDIA_TYPE_VIDEO_RAW:
 			// Raw
-			err = json.Unmarshal(data, f.FlowVideoRaw)
+			var parsed FlowVideoRaw
+			err = json.Unmarshal(data, &parsed)
 			if err != nil {
 				return err
 			}
 			f.Type = FLOW_TYPE_VIDEO_RAW
+			f.FlowVideoRaw = &parsed
 			return nil
 		default:
 			// Coded
-			err = json.Unmarshal(data, f.FlowVideoCoded)
+			var parsed FlowVideoCoded
+			err = json.Unmarshal(data, &parsed)
 			if err != nil {
 				return err
 			}
 			f.Type = FLOW_TYPE_VIDEO_CODED
+			f.FlowVideoCoded = &parsed
 			return nil
 		}
 	case FORMAT_AUDIO:
@@ -75,43 +79,53 @@ func (f *Flow) UnmarshalJSON(data []byte) error {
 		switch mediaType {
 		case IANA_MEDIA_TYPE_AUDIO_L24:
 			// Raw
-			err = json.Unmarshal(data, f.FlowAudioRaw)
+			var parsed FlowAudioRaw
+			err = json.Unmarshal(data, &parsed)
 			if err != nil {
 				return err
 			}
 			f.Type = FLOW_TYPE_AUDIO_RAW
+			f.FlowAudioRaw = &parsed
 			return nil
 		case IANA_MEDIA_TYPE_AUDIO_L20:
 			// Raw
-			err = json.Unmarshal(data, f.FlowAudioRaw)
+			var parsed FlowAudioRaw
+			err = json.Unmarshal(data, &parsed)
 			if err != nil {
 				return err
 			}
 			f.Type = FLOW_TYPE_AUDIO_RAW
+			f.FlowAudioRaw = &parsed
 			return nil
 		case IANA_MEDIA_TYPE_AUDIO_L16:
 			// Raw
-			err = json.Unmarshal(data, f.FlowAudioRaw)
+			var parsed FlowAudioRaw
+			err = json.Unmarshal(data, &parsed)
 			if err != nil {
 				return err
 			}
 			f.Type = FLOW_TYPE_AUDIO_RAW
+			f.FlowAudioRaw = &parsed
 			return nil
 		case IANA_MEDIA_TYPE_AUDIO_L8:
 			// Raw
-			err = json.Unmarshal(data, f.FlowAudioRaw)
+			var parsed FlowAudioRaw
+			err = json.Unmarshal(data, &parsed)
 			if err != nil {
 				return err
 			}
 			f.Type = FLOW_TYPE_AUDIO_RAW
+			f.FlowAudioRaw = &parsed
 			return nil
 		default:
 			// Coded
-			err = json.Unmarshal(data, f.FlowAudioCoded)
+			var parsed FlowAudioCoded
+			err = json.Unmarshal(data, &parsed)
 			if err != nil {
 				return err
 			}
 			f.Type = FLOW_TYPE_AUDIO_CODED
+			f.FlowAudioCoded = &parsed
 			return nil
 		}
 	case FORMAT_DATA:
@@ -122,27 +136,33 @@ func (f *Flow) UnmarshalJSON(data []byte) error {
 		switch mediaType {
 		case IANA_MEDIA_TYPE_SMPTE291:
 			// sdi_anc
-			err = json.Unmarshal(data, f.FlowSDIANCData)
+			var parsed FlowSDIANCData
+			err = json.Unmarshal(data, &parsed)
 			if err != nil {
 				return err
 			}
 			f.Type = FLOW_TYPE_SDIANC_DATA
+			f.FlowSDIANCData = &parsed
 			return nil
 		default:
 			// data
-			err = json.Unmarshal(data, f.FlowData)
+			var parsed FlowData
+			err = json.Unmarshal(data, &parsed)
 			if err != nil {
 				return err
 			}
 			f.Type = FLOW_TYPE_DATA
+			f.FlowData = &parsed
 			return nil
 		}
 	case FORMAT_MUX:
-		err = json.Unmarshal(data, f.FlowMux)
+		var parsed FlowMux
+		err = json.Unmarshal(data, &parsed)
 		if err != nil {
 			return err
 		}
 		f.Type = FLOW_TYPE_MUX
+		f.FlowMux = &parsed
 		return nil
 	default:
 		return fmt.Errorf("unable to parse format for data: %s", string(data))
