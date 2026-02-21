@@ -21,6 +21,6 @@ type Receiver struct {
 
 // Object containing the 'sender_id' currently subscribed to. Sender_id should be null on initialisation.
 type ReceiverSubscription struct {
-	SenderID null.String `json:"sender_id"` // UUID of the Sender that this Receiver is currently subscribed to
-	Active   zero.Bool   `json:"active"`    // Not in spec, but usually implemented. True when sender_id is not null
+	SenderID null.String `json:"sender_id"`       // UUID of the Sender that this Receiver is currently subscribed to
+	Active   zero.Bool   `json:"active,omitzero"` // Not in spec, but usually implemented. True when sender_id is not null
 }
