@@ -9,5 +9,5 @@ type ReceiverMux struct {
 
 // Capabilities
 type ReceiverMuxCaps struct {
-	MediaTypes []IANAMediaType `json:"media_types"` // Subclassification of the formats accepted using IANA assigned media types
+	MediaTypes []string `json:"media_types"` // Subclassification of the formats accepted using IANA assigned media types
 }

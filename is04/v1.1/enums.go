@@ -11,18 +11,16 @@ const (
 	FORMAT_MUX   FormatURI = "urn:x-nmos:format:mux"
 )
 
-type IANAMediaType string
-
 const (
-	IANA_MEDIA_TYPE_VIDEO_RAW   IANAMediaType = "video/raw"
-	IANA_MEDIA_TYPE_VIDEO_H264  IANAMediaType = "video/H264"
-	IANA_MEDIA_TYPE_VIDEO_VC2   IANAMediaType = "video/vc2"
-	IANA_MEDIA_TYPE_AUDIO_L24   IANAMediaType = "audio/L24"
-	IANA_MEDIA_TYPE_AUDIO_L20   IANAMediaType = "audio/L20"
-	IANA_MEDIA_TYPE_AUDIO_L16   IANAMediaType = "audio/L16"
-	IANA_MEDIA_TYPE_AUDIO_L8    IANAMediaType = "audio/L8"
-	IANA_MEDIA_TYPE_SMPTE291    IANAMediaType = "video/smpte291"
-	IANA_MEDIA_TYPE_SMPTE2022_6 IANAMediaType = "video/SMPTE2022-6"
+	IANA_MEDIA_TYPE_VIDEO_RAW   string = "video/raw"
+	IANA_MEDIA_TYPE_VIDEO_H264  string = "video/H264"
+	IANA_MEDIA_TYPE_VIDEO_VC2   string = "video/vc2"
+	IANA_MEDIA_TYPE_AUDIO_L24   string = "audio/L24"
+	IANA_MEDIA_TYPE_AUDIO_L20   string = "audio/L20"
+	IANA_MEDIA_TYPE_AUDIO_L16   string = "audio/L16"
+	IANA_MEDIA_TYPE_AUDIO_L8    string = "audio/L8"
+	IANA_MEDIA_TYPE_SMPTE291    string = "video/smpte291"
+	IANA_MEDIA_TYPE_SMPTE2022_6 string = "video/SMPTE2022-6"
 )
 
 type TransportURI URI

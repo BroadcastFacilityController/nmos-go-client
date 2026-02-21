@@ -3,7 +3,7 @@ package is04v1_1
 // Describes a raw Video Flow
 type FlowVideoRaw struct {
 	FlowVideo
-	MediaType  IANAMediaType           `json:"media_type"`           // Subclassification of the format using IANA assigned media types
+	MediaType  string                  `json:"media_type"`           // Subclassification of the format using IANA assigned media types
 	Components []FlowVideoRawComponent `json:"components,omitempty"` // Array of objects describing the components
 }
 
