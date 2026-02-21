@@ -1,0 +1,13 @@
+package is04v1_1
+
+// Describes an audio Receiver
+type ReceiverAudio struct {
+	ReceiverCore
+	Format FormatURI         `json:"format"` // Type of Flow accepted by the Receiver as a URN
+	Caps   ReceiverAudioCaps `json:"caps"`   // Capabilities
+}
+
+// Capabilities
+type ReceiverAudioCaps struct {
+	MediaTypes []IANAMediaType `json:"media_types"` // Subclassification of the formats accepted using IANA assigned media types
+}
