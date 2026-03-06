@@ -22,16 +22,20 @@ type SourceCoreGrainRate struct {
 }
 
 func (r *SourceCoreGrainRate) UnmarshalJSON(data []byte) error {
-	var dataTest map[string]interface{}
+	var dataTest map[string]any
 	err := json.Unmarshal(data, &dataTest)
 	if err != nil {
 		return err
 	}
 	_, denominator_ok := dataTest["denominator"]
-	err = json.Unmarshal(data, r)
+	type alias SourceCoreGrainRate
+	var parsed alias
+	err = json.Unmarshal(data, &parsed)
 	if err != nil {
 		return err
 	}
+	r.Numerator = parsed.Numerator
+	r.Denominator = parsed.Denominator
 	if !denominator_ok {
 		r.Denominator = 1
 	}
@@ -39,7 +43,8 @@ func (r *SourceCoreGrainRate) UnmarshalJSON(data []byte) error {
 }
 
 func (r *SourceCoreGrainRate) MarshalJSON() ([]byte, error) {
-	rCopy := *r
+	type alias SourceCoreGrainRate
+	rCopy := alias(*r)
 	// Omit field when default = 1
 	if rCopy.Denominator == 1 {
 		rCopy.Denominator = 0

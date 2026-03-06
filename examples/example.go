@@ -10,14 +10,14 @@ import (
 func main() {
 	doAPIs := make(map[common.APIType]bool)
 	doAPIs[common.NODE] = false
-	doAPIs[common.QUERY] = false
+	doAPIs[common.QUERY] = true
 	doAPIs[common.REGISTRATION] = false
-	doAPIs[common.CONNECTION] = true
+	doAPIs[common.CONNECTION] = false
 
 	endpointHRefs := []string{
-		//"http://10.10.60.10:8080/x-nmos", // Cerebrum Registry
-		"http://10.10.71.11:80/x-nmos", // VB-440
-		"http://10.10.251.2:80/x-nmos", // Telestream SPG9000
+		"http://10.10.60.10:8080/x-nmos", // Cerebrum Registry
+		//"http://10.10.71.11:80/x-nmos", // VB-440
+		//"http://10.10.251.2:80/x-nmos", // Telestream SPG9000
 	}
 	endpoints := make([]nmos.NMOSEndpoint, len(endpointHRefs))
 	for i, href := range endpointHRefs {
@@ -121,8 +121,8 @@ func main() {
 					fmt.Println("----------")
 					fmt.Println("Version: ", vers)
 					if vers.Equals(common.NewAPIVersion(1, 0)) {
-						fmt.Println("Nodes:")
-						fmt.Println(endpoint.IS04().V1_0().QueryGetNodes())
+						//fmt.Println("Nodes:")
+						//fmt.Println(endpoint.IS04().V1_0().QueryGetNodes())
 						//fmt.Println("Devices:")
 						//fmt.Println(endpoint.IS04().V1_0().QueryGetDevices())
 						//fmt.Println("Flows:")
@@ -135,22 +135,22 @@ func main() {
 						//fmt.Println(endpoint.IS04().V1_0().QueryGetReceivers())
 					}
 					if vers.Equals(common.NewAPIVersion(1, 1)) {
-						fmt.Println("Nodes:")
-						fmt.Println(endpoint.IS04().V1_1().QueryGetNodes())
+						//fmt.Println("Nodes:")
+						//fmt.Println(endpoint.IS04().V1_1().QueryGetNodes())
 						//fmt.Println("Devices:")
 						//fmt.Println(endpoint.IS04().V1_1().QueryGetDevices())
 						//fmt.Println("Flows:")
 						//fmt.Println(endpoint.IS04().V1_1().QueryGetFlows())
-						//fmt.Println("Sources:")
-						//fmt.Println(endpoint.IS04().V1_1().QueryGetSources())
+						fmt.Println("Sources:")
+						fmt.Println(endpoint.IS04().V1_1().QueryGetSources())
 						//fmt.Println("Senders:")
 						//fmt.Println(endpoint.IS04().V1_1().QueryGetSenders())
 						//fmt.Println("Receivers:")
 						//fmt.Println(endpoint.IS04().V1_1().QueryGetReceivers())
 					}
 					if vers.Equals(common.NewAPIVersion(1, 2)) {
-						fmt.Println("Nodes:")
-						fmt.Println(endpoint.IS04().V1_2().QueryGetNodes())
+						//fmt.Println("Nodes:")
+						//fmt.Println(endpoint.IS04().V1_2().QueryGetNodes())
 						//fmt.Println("Devices:")
 						//fmt.Println(endpoint.IS04().V1_2().QueryGetDevices())
 						//fmt.Println("Flows:")

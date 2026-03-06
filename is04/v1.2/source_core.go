@@ -28,10 +28,14 @@ func (r *SourceCoreGrainRate) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	_, denominator_ok := dataTest["denominator"]
-	err = json.Unmarshal(data, r)
+	type alias SourceCoreGrainRate
+	var parsed alias
+	err = json.Unmarshal(data, &parsed)
 	if err != nil {
 		return err
 	}
+	r.Numerator = parsed.Numerator
+	r.Denominator = parsed.Denominator
 	if !denominator_ok {
 		r.Denominator = 1
 	}

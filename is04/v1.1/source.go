@@ -22,7 +22,7 @@ const (
 )
 
 func (s *Source) UnmarshalJSON(data []byte) error {
-	var dataTest map[string]interface{}
+	var dataTest map[string]any
 	err := json.Unmarshal(data, &dataTest)
 	if err != nil {
 		return err
