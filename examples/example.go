@@ -135,14 +135,17 @@ func main() {
 						//fmt.Println(endpoint.IS04().V1_0().QueryGetReceivers())
 					}
 					if vers.Equals(common.NewAPIVersion(1, 1)) {
-						//fmt.Println("Nodes:")
-						//fmt.Println(endpoint.IS04().V1_1().QueryGetNodes())
+						fmt.Println("Nodes:")
+						nodes, _ := endpoint.IS04().V1_1().QueryGetNodes()
+						for _, node := range nodes {
+							fmt.Println(node.ID)
+						}
 						//fmt.Println("Devices:")
 						//fmt.Println(endpoint.IS04().V1_1().QueryGetDevices())
 						//fmt.Println("Flows:")
 						//fmt.Println(endpoint.IS04().V1_1().QueryGetFlows())
-						fmt.Println("Sources:")
-						fmt.Println(endpoint.IS04().V1_1().QueryGetSources())
+						//fmt.Println("Sources:")
+						//fmt.Println(endpoint.IS04().V1_1().QueryGetSources())
 						//fmt.Println("Senders:")
 						//fmt.Println(endpoint.IS04().V1_1().QueryGetSenders())
 						//fmt.Println("Receivers:")
@@ -163,8 +166,8 @@ func main() {
 						//fmt.Println(endpoint.IS04().V1_2().QueryGetReceivers())
 					}
 					if vers.Equals(common.NewAPIVersion(1, 3)) {
-						fmt.Println("Nodes:")
-						fmt.Println(endpoint.IS04().V1_3().QueryGetNodes())
+						//fmt.Println("Nodes:")
+						//fmt.Println(endpoint.IS04().V1_3().QueryGetNodes())
 						//fmt.Println("Devices:")
 						//fmt.Println(endpoint.IS04().V1_2().QueryGetDevices())
 						//fmt.Println("Flows:")

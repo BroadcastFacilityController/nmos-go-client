@@ -384,7 +384,8 @@ func (v *IS04V1_3) NodePutReceiver(receiverID string, sender *Sender) error {
 
 func (v *IS04V1_3) QueryGetNodes() ([]Node, error) {
 	url := v.href + "/query/v1.3/nodes"
-	request, err := http.NewRequest(http.MethodGet, url, nil)
+	urlInitial := fmt.Sprintf("%s?paging.order=create&paging.since=0:0", url)
+	request, err := http.NewRequest(http.MethodGet, urlInitial, nil)
 	if err != nil {
 		return []Node{}, err
 	}
@@ -410,7 +411,7 @@ func (v *IS04V1_3) QueryGetNodes() ([]Node, error) {
 				break
 			}
 			lastSince = limit
-			next := fmt.Sprintf("%s?paging.since=%s", url, limit)
+			next := fmt.Sprintf("%s?paging.order=create&paging.since=%s", url, limit)
 			reqNew, err := http.NewRequest(http.MethodGet, next, nil)
 			if err != nil {
 				return []Node{}, err
@@ -460,7 +461,8 @@ func (v *IS04V1_3) QueryGetNode(nodeID string) (Node, error) {
 
 func (v *IS04V1_3) QueryGetSources() ([]Source, error) {
 	url := v.href + "/query/v1.3/sources"
-	request, err := http.NewRequest(http.MethodGet, url, nil)
+	urlInitial := fmt.Sprintf("%s?paging.order=create&paging.since=0:0", url)
+	request, err := http.NewRequest(http.MethodGet, urlInitial, nil)
 	if err != nil {
 		return []Source{}, err
 	}
@@ -486,7 +488,7 @@ func (v *IS04V1_3) QueryGetSources() ([]Source, error) {
 				break
 			}
 			lastSince = limit
-			next := fmt.Sprintf("%s?paging.since=%s", url, limit)
+			next := fmt.Sprintf("%s?paging.order=create&paging.since=%s", url, limit)
 			reqNew, err := http.NewRequest(http.MethodGet, next, nil)
 			if err != nil {
 				return []Source{}, err
@@ -536,7 +538,8 @@ func (v *IS04V1_3) QueryGetSource(sourceID string) (Source, error) {
 
 func (v *IS04V1_3) QueryGetFlows() ([]Flow, error) {
 	url := v.href + "/query/v1.3/flows"
-	request, err := http.NewRequest(http.MethodGet, url, nil)
+	urlInitial := fmt.Sprintf("%s?paging.order=create&paging.since=0:0", url)
+	request, err := http.NewRequest(http.MethodGet, urlInitial, nil)
 	if err != nil {
 		return []Flow{}, err
 	}
@@ -562,7 +565,7 @@ func (v *IS04V1_3) QueryGetFlows() ([]Flow, error) {
 				break
 			}
 			lastSince = limit
-			next := fmt.Sprintf("%s?paging.since=%s", url, limit)
+			next := fmt.Sprintf("%s?paging.order=create&paging.since=%s", url, limit)
 			reqNew, err := http.NewRequest(http.MethodGet, next, nil)
 			if err != nil {
 				return []Flow{}, err
@@ -612,7 +615,8 @@ func (v *IS04V1_3) QueryGetFlow(flowID string) (Flow, error) {
 
 func (v *IS04V1_3) QueryGetDevices() ([]Device, error) {
 	url := v.href + "/query/v1.3/devices"
-	request, err := http.NewRequest(http.MethodGet, url, nil)
+	urlInitial := fmt.Sprintf("%s?paging.order=create&paging.since=0:0", url)
+	request, err := http.NewRequest(http.MethodGet, urlInitial, nil)
 	if err != nil {
 		return []Device{}, err
 	}
@@ -638,7 +642,7 @@ func (v *IS04V1_3) QueryGetDevices() ([]Device, error) {
 				break
 			}
 			lastSince = limit
-			next := fmt.Sprintf("%s?paging.since=%s", url, limit)
+			next := fmt.Sprintf("%s?paging.order=create&paging.since=%s", url, limit)
 			reqNew, err := http.NewRequest(http.MethodGet, next, nil)
 			if err != nil {
 				return []Device{}, err
@@ -688,7 +692,8 @@ func (v *IS04V1_3) QueryGetDevice(deviceID string) (Device, error) {
 
 func (v *IS04V1_3) QueryGetSenders() ([]Sender, error) {
 	url := v.href + "/query/v1.3/senders"
-	request, err := http.NewRequest(http.MethodGet, url, nil)
+	urlInitial := fmt.Sprintf("%s?paging.order=create&paging.since=0:0", url)
+	request, err := http.NewRequest(http.MethodGet, urlInitial, nil)
 	if err != nil {
 		return []Sender{}, err
 	}
@@ -714,7 +719,7 @@ func (v *IS04V1_3) QueryGetSenders() ([]Sender, error) {
 				break
 			}
 			lastSince = limit
-			next := fmt.Sprintf("%s?paging.since=%s", url, limit)
+			next := fmt.Sprintf("%s?paging.order=create&paging.since=%s", url, limit)
 			reqNew, err := http.NewRequest(http.MethodGet, next, nil)
 			if err != nil {
 				return []Sender{}, err
@@ -764,7 +769,8 @@ func (v *IS04V1_3) QueryGetSender(senderID string) (Sender, error) {
 
 func (v *IS04V1_3) QueryGetReceivers() ([]Receiver, error) {
 	url := v.href + "/query/v1.3/receivers"
-	request, err := http.NewRequest(http.MethodGet, url, nil)
+	urlInitial := fmt.Sprintf("%s?paging.order=create&paging.since=0:0", url)
+	request, err := http.NewRequest(http.MethodGet, urlInitial, nil)
 	if err != nil {
 		return []Receiver{}, err
 	}
@@ -790,7 +796,7 @@ func (v *IS04V1_3) QueryGetReceivers() ([]Receiver, error) {
 				break
 			}
 			lastSince = limit
-			next := fmt.Sprintf("%s?paging.since=%s", url, limit)
+			next := fmt.Sprintf("%s?paging.order=create&paging.since=%s", url, limit)
 			reqNew, err := http.NewRequest(http.MethodGet, next, nil)
 			if err != nil {
 				return []Receiver{}, err
@@ -840,7 +846,8 @@ func (v *IS04V1_3) QueryGetReceiver(receiverID string) (Receiver, error) {
 
 func (v *IS04V1_3) QueryGetSubscriptions() ([]QueryAPISubscription, error) {
 	url := v.href + "/query/v1.3/subscriptions"
-	request, err := http.NewRequest(http.MethodGet, url, nil)
+	urlInitial := fmt.Sprintf("%s?paging.order=create&paging.since=0:0", url)
+	request, err := http.NewRequest(http.MethodGet, urlInitial, nil)
 	if err != nil {
 		return []QueryAPISubscription{}, err
 	}
@@ -866,7 +873,7 @@ func (v *IS04V1_3) QueryGetSubscriptions() ([]QueryAPISubscription, error) {
 				break
 			}
 			lastSince = limit
-			next := fmt.Sprintf("%s?paging.since=%s", url, limit)
+			next := fmt.Sprintf("%s?paging.order=create&paging.since=%s", url, limit)
 			reqNew, err := http.NewRequest(http.MethodGet, next, nil)
 			if err != nil {
 				return []QueryAPISubscription{}, err
