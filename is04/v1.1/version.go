@@ -416,7 +416,8 @@ func (v *IS04V1_1) QueryGetNodes() ([]Node, error) {
 	switch response.StatusCode {
 	case http.StatusOK:
 		// Default
-		result := make([]Node, 0)
+		result_maxSize := 1000
+		result := make([]Node, 0, result_maxSize)
 		lastSince := "0:0"
 		for true {
 			respParsed, err := parseResponse[[]Node](response)
@@ -441,6 +442,10 @@ func (v *IS04V1_1) QueryGetNodes() ([]Node, error) {
 				return []Node{}, err
 			}
 		}
+		// Release extra space
+		result_copy := make([]Node, len(result))
+		copy(result_copy, result)
+		result = result_copy
 		return result, nil
 	default:
 		return []Node{}, fmt.Errorf("bad response code. got %d", response.StatusCode)
@@ -493,7 +498,8 @@ func (v *IS04V1_1) QueryGetSources() ([]Source, error) {
 	switch response.StatusCode {
 	case http.StatusOK:
 		// Default
-		result := make([]Source, 0)
+		result_maxSize := 10000
+		result := make([]Source, 0, result_maxSize)
 		lastSince := "0:0"
 		for true {
 			respParsed, err := parseResponse[[]Source](response)
@@ -518,6 +524,10 @@ func (v *IS04V1_1) QueryGetSources() ([]Source, error) {
 				return []Source{}, err
 			}
 		}
+		// Release extra space
+		result_copy := make([]Source, len(result))
+		copy(result_copy, result)
+		result = result_copy
 		return result, nil
 	default:
 		return []Source{}, fmt.Errorf("bad response code. got %d", response.StatusCode)
@@ -570,7 +580,8 @@ func (v *IS04V1_1) QueryGetFlows() ([]Flow, error) {
 	switch response.StatusCode {
 	case http.StatusOK:
 		// Default
-		result := make([]Flow, 0)
+		result_maxSize := 10000
+		result := make([]Flow, 0, result_maxSize)
 		lastSince := "0:0"
 		for true {
 			respParsed, err := parseResponse[[]Flow](response)
@@ -595,6 +606,10 @@ func (v *IS04V1_1) QueryGetFlows() ([]Flow, error) {
 				return []Flow{}, err
 			}
 		}
+		// Release extra space
+		result_copy := make([]Flow, len(result))
+		copy(result_copy, result)
+		result = result_copy
 		return result, nil
 	default:
 		return []Flow{}, fmt.Errorf("bad response code. got %d", response.StatusCode)
@@ -647,7 +662,8 @@ func (v *IS04V1_1) QueryGetDevices() ([]Device, error) {
 	switch response.StatusCode {
 	case http.StatusOK:
 		// Default
-		result := make([]Device, 0)
+		result_maxSize := 2000
+		result := make([]Device, 0, result_maxSize)
 		lastSince := "0:0"
 		for true {
 			respParsed, err := parseResponse[[]Device](response)
@@ -672,6 +688,10 @@ func (v *IS04V1_1) QueryGetDevices() ([]Device, error) {
 				return []Device{}, err
 			}
 		}
+		// Release extra space
+		result_copy := make([]Device, len(result))
+		copy(result_copy, result)
+		result = result_copy
 		return result, nil
 	default:
 		return []Device{}, fmt.Errorf("bad response code. got %d", response.StatusCode)
@@ -724,7 +744,8 @@ func (v *IS04V1_1) QueryGetSenders() ([]Sender, error) {
 	switch response.StatusCode {
 	case http.StatusOK:
 		// Default
-		result := make([]Sender, 0)
+		result_maxSize := 10000
+		result := make([]Sender, 0, result_maxSize)
 		lastSince := "0:0"
 		for true {
 			respParsed, err := parseResponse[[]Sender](response)
@@ -749,6 +770,10 @@ func (v *IS04V1_1) QueryGetSenders() ([]Sender, error) {
 				return []Sender{}, err
 			}
 		}
+		// Release extra space
+		result_copy := make([]Sender, len(result))
+		copy(result_copy, result)
+		result = result_copy
 		return result, nil
 	default:
 		return []Sender{}, fmt.Errorf("bad response code. got %d", response.StatusCode)
@@ -801,7 +826,8 @@ func (v *IS04V1_1) QueryGetReceivers() ([]Receiver, error) {
 	switch response.StatusCode {
 	case http.StatusOK:
 		// Default
-		result := make([]Receiver, 0)
+		result_maxSize := 10000
+		result := make([]Receiver, 0, result_maxSize)
 		lastSince := "0:0"
 		for true {
 			respParsed, err := parseResponse[[]Receiver](response)
@@ -826,6 +852,10 @@ func (v *IS04V1_1) QueryGetReceivers() ([]Receiver, error) {
 				return []Receiver{}, err
 			}
 		}
+		// Release extra space
+		result_copy := make([]Receiver, len(result))
+		copy(result_copy, result)
+		result = result_copy
 		return result, nil
 	default:
 		return []Receiver{}, fmt.Errorf("bad response code. got %d", response.StatusCode)
@@ -878,7 +908,8 @@ func (v *IS04V1_1) QueryGetSubscriptions() ([]QueryAPISubscription, error) {
 	switch response.StatusCode {
 	case http.StatusOK:
 		// Default
-		result := make([]QueryAPISubscription, 0)
+		result_maxSize := 100
+		result := make([]QueryAPISubscription, 0, result_maxSize)
 		lastSince := "0:0"
 		for true {
 			respParsed, err := parseResponse[[]QueryAPISubscription](response)
@@ -903,6 +934,10 @@ func (v *IS04V1_1) QueryGetSubscriptions() ([]QueryAPISubscription, error) {
 				return []QueryAPISubscription{}, err
 			}
 		}
+		// Release extra space
+		result_copy := make([]QueryAPISubscription, len(result))
+		copy(result_copy, result)
+		result = result_copy
 		return result, nil
 	default:
 		return []QueryAPISubscription{}, fmt.Errorf("bad response code. got %d, wanted %d", response.StatusCode, http.StatusOK)
